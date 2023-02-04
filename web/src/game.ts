@@ -13,12 +13,13 @@ type Sprite = {
 	y: number;
 };
 
-export type Room = {
+export type RoomConfig = {
 	sprites: Sprite[];
 	uiButton: Sprite;
 	width: number;
 	costs: Costs;
 	time: number;
+	type: string;
 };
 
 interface WorkerT {
@@ -45,94 +46,32 @@ export type MapRoom = {
 };
 
 type Rooms = {
-	[key: string]: Room;
+	[key: string]: RoomConfig;
 };
+
+interface MapT {
+	rooms: MapRoom[];
+}
 
 type Config = {
 	rooms: Rooms;
 };
 
 export class Game {
-	config(): Config {
-		return {
-			rooms: {
-				kitchen: {
-					sprites: [
-						{ x: 2, y: 0 },
-						{ x: 3, y: 0 },
-					],
-					uiButton: { x: 4, y: 0 },
-					width: 2,
-					costs: {
-						wood: 2,
-						stone: 3,
-					},
-					time: 10,
-				},
-				"mushroom-nursery": {
-					sprites: [
-						{ x: 8, y: 0 },
-						{ x: 9, y: 0 },
-						{ x: 7, y: 0 },
-					],
-					uiButton: { x: 7, y: 0 },
-					width: 3,
-					costs: {
-						wood: 2,
-						stone: 3,
-					},
-					time: 10,
-				},
-				quarry: {
-					sprites: [
-						{ x: 5, y: 0 },
-						{ x: 6, y: 0 },
-						{ x: 4, y: 0 },
-					],
-					uiButton: { x: 5, y: 0 },
-					width: 3,
-					costs: {
-						wood: 2,
-						stone: 3,
-					},
-					time: 10,
-				},
-				staircase: {
-					sprites: [{ x: 1, y: 0 }],
-					uiButton: { x: 6, y: 0 },
-					width: 1,
-					costs: {
-						wood: 2,
-						stone: 3,
-					},
-					time: 10,
-				},
-			},
-		};
-	}
-
-	rooms(): MapRoom[] {
-		return [
+	resources: Resources = {};
+	workers: WorkerT[] = [];
+	map: MapT = {
+		rooms: [
 			{
 				workers: [],
 				resources: {
 					wood: 10,
 					mushroom: 10,
 				},
-				type: "mushroom-nursery",
+				type: "mushroom_nursery",
 				level: 1.0,
 				position: {
 					x: 2,
-					y: 2,
-				},
-			},
-			{
-				workers: [],
-				resources: {},
-				type: "staircase",
-				level: 1.0,
-				position: {
-					x: 1,
 					y: 2,
 				},
 			},
@@ -160,6 +99,185 @@ export class Game {
 					y: 4,
 				},
 			},
-		];
+		],
+	};
+	_config: Config = {
+		rooms: {
+			"kitchen": {
+				sprites: [
+					{ x: 2, y: 0 },
+					{ x: 3, y: 0 },
+				],
+				uiButton: { x: 4, y: 0 },
+				width: 2,
+				costs: {
+					wood: 2,
+					stone: 3,
+				},
+				time: 10,
+				type: "kitchen",
+			},
+			"mushroom_nursery": {
+				sprites: [
+					{ x: 8, y: 0 },
+					{ x: 9, y: 0 },
+					{ x: 7, y: 0 },
+				],
+				uiButton: { x: 7, y: 0 },
+				width: 3,
+				costs: {
+					wood: 2,
+					stone: 3,
+				},
+				time: 10,
+				type: "mushroom_nursery",
+			},
+			"quarry": {
+				sprites: [
+					{ x: 5, y: 0 },
+					{ x: 6, y: 0 },
+					{ x: 4, y: 0 },
+				],
+				uiButton: { x: 5, y: 0 },
+				width: 3,
+				costs: {
+					wood: 2,
+					stone: 3,
+				},
+				time: 10,
+				type: "quarry",
+			},
+			"staircase": {
+				sprites: [{ x: 1, y: 0 }],
+				uiButton: { x: 6, y: 0 },
+				width: 1,
+				costs: {
+					wood: 2,
+					stone: 3,
+				},
+				time: 10,
+				type: "staircase",
+			},
+		},
+	};
+	gameLoop() {
+		this.map.rooms.forEach((room) => {
+			if (room.workers.length > 0) {
+				room.workers.forEach((worker) => {
+					room.type === "mushroom_nursery" && this.mushroom_nursery(room);
+					room.type === "kitchen" && this.kitchen(room);
+					room.type === "quarry" && this.quarry(room);
+					if(room.type === "mushroom_nursery" || room.type === "kitchen" || room.type === "quarry")
+					{
+						let useWorker = this.workers.filter((workerT) => workerT.name === worker)[0];
+						useWorker.hunger += 0.1;
+						useWorker.thirst += 0.1;
+						if(useWorker.hunger > 1 || useWorker.thirst > 1) {
+							console.log("Worker is dead");
+							this.moveWorker(useWorker, { x: 0, y: 0 });
+							this.workers = this.workers.filter((workerT) => workerT.name !== worker);
+						}
+					}
+					if(room.type === "lunchroom")
+					{
+						let useWorker = this.workers.filter((workerT) => workerT.name === worker)[0];
+						if(typeof this.resources.cookedMushroom !== "undefined" && this.resources.cookedMushroom > 0 && useWorker.hunger > 0.5) {
+							useWorker.hunger -= 0.5;
+							this.resources.cookedMushroom -= 1;
+						}
+						if(typeof this.resources.waterBucket !== "undefined" && this.resources.waterBucket > 0 && useWorker.thirst > 0.5) {
+							useWorker.thirst -= 0.5;
+							this.resources.waterBucket -= 1;
+						}
+					}
+				});
+			}
+		});
+	}
+	moveWorker(worker: WorkerT, position: Position) {
+		worker.position = position;
+		this.map.rooms.forEach((room) => {
+			if (room.position.x === Math.floor(position.x) && room.position.y === Math.floor(position.y)) {
+				if(!room.workers.includes(worker.name))
+					room.workers.push(worker.name);
+			}
+			else {
+				room.workers.forEach((workerName, index) => {
+					if (workerName === worker.name) {
+						room.workers.splice(index, 1);
+					}
+				});
+			}
+		});
+	}
+	buildRoom(room: RoomConfig, position: Position) {
+		const config = this.config();
+		if (
+			typeof this.resources.wood !== "undefined" &&
+			config.rooms[room.type].costs.wood >= this.resources.wood
+		) {
+			console.log(
+				`Not enough wood for ${room.type} at position X:${position.x} Y:${position.y}`,
+			);
+			return false;
+		}
+		if (
+			typeof this.resources.stone !== "undefined" &&
+			config.rooms[room.type].costs.stone >= this.resources.stone
+		) {
+			console.log(
+				`Not enough stone for ${room.type} at position X:${position.x} Y:${position.y}`,
+			);
+			return false;
+		}
+		if (
+			typeof this.resources.wood !== "undefined" &&
+			typeof this.resources.stone !== "undefined"
+		) {
+			this.resources.wood -= config.rooms[room.type].costs.wood;
+			this.resources.stone -= config.rooms[room.type].costs.stone;
+		}
+		this.map.rooms.push({
+			workers: [],
+			resources: {},
+			type: room.type,
+			level: 1.0,
+			position: position,
+		});
+		return true;
+	}
+	mushroom_nursery(room: MapRoom) {
+		if (typeof this.resources.mushroom === "undefined") {
+			this.resources.mushroom = 1 * room.level;
+		}
+		this.resources.mushroom += 1 * room.level;
+		if (typeof this.resources.wood === "undefined") {
+			this.resources.wood = 1 * room.level;
+		}
+		this.resources.wood += 1 * room.level;
+	}
+	kitchen(room: MapRoom) {
+		if (typeof this.resources.cookedMushroom === "undefined" && typeof this.resources.mushroom !== "undefined" && this.resources.mushroom > 0) {
+			this.resources.cookedMushroom = 1 * room.level;
+			this.resources.mushroom -= 1 * room.level;
+		}
+		else if (typeof this.resources.cookedMushroom !== "undefined" && typeof this.resources.mushroom !== "undefined" && this.resources.mushroom > 0) {
+			this.resources.cookedMushroom += 1 * room.level;
+			this.resources.mushroom -= 1 * room.level;
+		}
+		// Nope
+	}
+	quarry(room: MapRoom) {
+		if (typeof this.resources.stone === "undefined") {
+			this.resources.stone = 1 * room.level;
+		}
+		this.resources.stone += 1 * room.level;
+	}
+	config(): Config {
+		return this._config;
+	}
+
+	rooms(): MapRoom[] {
+		return this.map.rooms;
 	}
 }

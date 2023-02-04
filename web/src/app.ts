@@ -1,4 +1,4 @@
-import { Game } from './game';
+import { Game, RoomConfig } from './game';
 import { Renderer } from './render';
 
 window.addEventListener('load', () => {
@@ -17,6 +17,7 @@ class App {
 	_context: CanvasRenderingContext2D;
 	_renderer: Renderer
 	_game: Game
+	_blueprint: RoomConfig | undefined;
 
 	constructor(game: Game, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this._canvas = canvas;
@@ -31,13 +32,15 @@ class App {
 	}
 
 	click(x: number, y: number) {
-		const ui = this._renderer.uiOnScreen(x,y)
-		if (ui) {
+		const clickedBlueprint = this._renderer.uiOnScreen(x,y)
+		if (clickedBlueprint) {
 			this._renderer.setMode("build")
+			this._blueprint = clickedBlueprint;
 		} else {
-			if (this._renderer.getMode() == "build") {
+			if (this._renderer.getMode() === "build" && this._blueprint) {
 				// build to:
 				const buildPos = this._renderer.screenToMap(x,y)
+				this._game.buildRoom(this._blueprint, {x:buildPos.x, y:buildPos.y})
 			}
 
 			this._renderer.setMode("inspect")

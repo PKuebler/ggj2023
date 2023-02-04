@@ -1,5 +1,5 @@
 import { Loader } from './loader';
-import { Game, Room, MapRoom } from './game';
+import { Game, RoomConfig, MapRoom } from './game';
 
 export class Renderer {
 	_game: Game;
@@ -102,7 +102,7 @@ export class Renderer {
 		return this._mode;
 	}
 
-	uiOnScreen(screenX: number, screenY: number): Room | undefined {
+	uiOnScreen(screenX: number, screenY: number): RoomConfig | undefined {
 		const config = this._game.config()
 
 		if (screenX < this._uiX || screenY < this._uiY || screenY > this._uiY+this._tileWidth) {
