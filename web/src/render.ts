@@ -24,6 +24,7 @@ export class Renderer {
 	_workerHoverSprite: Sprite;
 	_workerAreaMin: Position;
 	_workerAreaMax: Position;
+	_workerThirsty: Sprite;
 
 	constructor(game: Game, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this._game = game
@@ -60,6 +61,10 @@ export class Renderer {
 		this._workerAreaMax = {
 			x: 40,
 			y: 64,
+		}
+		this._workerThirsty = {
+			x: 12,
+			y: 0
 		}
 
 		this._loader = new Loader({
@@ -116,6 +121,10 @@ export class Renderer {
 		this._game.workers().forEach((worker) => {
 			const screenPos = this.mapToScreen(worker.position.x, worker.position.y)
 			this._ctx.drawImage(ground, this._workerSprite.x*this._tileWidth, this._workerSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
+
+			if (worker.thirst > 0.7) {
+				this._ctx.drawImage(ground, this._workerThirsty.x*this._tileWidth, this._workerThirsty.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
+			}
 		})
 
 		if (this._hoverWorker) {
