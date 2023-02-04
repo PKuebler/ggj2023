@@ -24,6 +24,7 @@ export class Renderer {
 	_workerHoverSprite: Sprite;
 	_workerAreaMin: Position;
 	_workerAreaMax: Position;
+	_workerThirsty: Sprite;
 
 	constructor(game: Game, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this._game = game
@@ -60,6 +61,10 @@ export class Renderer {
 		this._workerAreaMax = {
 			x: 40,
 			y: 64,
+		}
+		this._workerThirsty = {
+			x: 12,
+			y: 0
 		}
 
 		this._loader = new Loader({
@@ -116,6 +121,10 @@ export class Renderer {
 		this._game.workers().forEach((worker) => {
 			const screenPos = this.mapToScreen(worker.position.x, worker.position.y)
 			this._ctx.drawImage(ground, this._workerSprite.x*this._tileWidth, this._workerSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
+
+			if (worker.thirst > 0.7) {
+				this._ctx.drawImage(ground, this._workerThirsty.x*this._tileWidth, this._workerThirsty.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
+			}
 		})
 
 		if (this._hoverWorker) {
@@ -127,7 +136,11 @@ export class Renderer {
 		const roomNames = Object.keys(config.rooms)
 		for (let i = 0; i < roomNames.length; i++) {
 			const room = config.rooms[roomNames[i]];
-			this._ctx.drawImage(ui, room.uiButton.x*this._tileWidth, room.uiButton.y*this._tileHeight, this._tileWidth, this._tileHeight, this._uiX+i*this._tileWidth, this._uiY, this._tileWidth, this._tileHeight);
+			let sprite = room.uiButton;
+			if (!this._game.canBuildRoom(room)) {
+				sprite = room.uiDisabledButton;
+			}
+			this._ctx.drawImage(ui, sprite.x*this._tileWidth, sprite.y*this._tileHeight, this._tileWidth, this._tileHeight, this._uiX+i*this._tileWidth, this._uiY, this._tileWidth, this._tileHeight);
 		}
 
 		this._ctx.fillStyle = "white";

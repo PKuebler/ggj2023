@@ -145,7 +145,7 @@ export class Game {
 					{ x: 7, y: 0 },
 				],
 				uiButton: { x: 7, y: 0 },
-				uiDisabledButton: { x: 11, y: 0 },
+				uiDisabledButton: { x: 9, y: 0 },
 				width: 3,
 				costs: {
 					wood: 2,
@@ -161,7 +161,7 @@ export class Game {
 					{ x: 4, y: 0 },
 				],
 				uiButton: { x: 5, y: 0 },
-				uiDisabledButton: { x: 9, y: 0 },
+				uiDisabledButton: { x: 10, y: 0 },
 				width: 3,
 				costs: {
 					wood: 2,
@@ -173,7 +173,7 @@ export class Game {
 			staircase: {
 				sprites: [{ x: 1, y: 0 }],
 				uiButton: { x: 6, y: 0 },
-				uiDisabledButton: { x: 10, y: 0 },
+				uiDisabledButton: { x: 11, y: 0 },
 				width: 1,
 				costs: {
 					wood: 2,
