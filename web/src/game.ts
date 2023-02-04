@@ -230,21 +230,44 @@ export class Game {
 			);
 			return false;
 		}
-		if (
-			typeof this.resources.wood !== "undefined" &&
-			typeof this.resources.stone !== "undefined"
-		) {
-			this.resources.wood -= config.rooms[room.type].costs.wood;
-			this.resources.stone -= config.rooms[room.type].costs.stone;
-		}
-		this.map.rooms.push({
-			workers: [],
-			resources: {},
-			type: room.type,
-			level: 1.0,
-			position: position,
+		let canbuild = true;
+		this.map.rooms.forEach((roomT) => {
+			if (roomT.position.y !== position.y) {
+				return;
+			}
+			let withcheck = this._config.rooms[room.type].width;
+			if (roomT.position.x === position.x) {
+				console.log(`Room already exists at position X:${position.x} Y:${position.y}`);
+				canbuild = false;
+				return;
+			}
+			for(let i = 0; i < withcheck; i++) {
+				if (roomT.position.x === position.x + i) {
+					console.log(`Room already exists at position X:${position.x} Y:${position.y}`);
+					canbuild = false;
+					return;
+				}
+			}
 		});
-		return true;
+		if(canbuild)
+		{
+			if (
+				typeof this.resources.wood !== "undefined" &&
+				typeof this.resources.stone !== "undefined"
+			) {
+				this.resources.wood -= config.rooms[room.type].costs.wood;
+				this.resources.stone -= config.rooms[room.type].costs.stone;
+			}
+			this.map.rooms.push({
+				workers: [],
+				resources: {},
+				type: room.type,
+				level: 1.0,
+				position: position,
+			});
+			return true;
+		}
+		return false;
 	}
 	mushroom_nursery(room: MapRoom) {
 		if (typeof this.resources.mushroom === "undefined") {
