@@ -97,7 +97,7 @@ export class Renderer {
 		this._ctx.fillStyle = "white";
 		const resources = this._game.resources()
 
-		this._ctx.fillText('Wood: '+(resources.wood??0)+' Stone: '+(resources.stone??0)+' Mushroom: '+(resources.mushroom??0)+' CookedMushroom: '+(resources.cookedMushroom??0)+' WaterBucket: '+(resources.waterBucket??0), 20, 20);
+		this._ctx.fillText('Wood: '+resources.wood+' Stone: '+resources.stone+' Mushroom: '+resources.mushroom+' CookedMushroom: '+resources.cookedMushroom+' WaterBucket: '+resources.waterBucket, 20, 20);
 	}
 
 	setMode(mode: string) {
