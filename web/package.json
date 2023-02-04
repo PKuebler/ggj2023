@@ -20,6 +20,8 @@
   "dependencies": {
     "cross-env": "^7.0.3",
     "laravel-mix": "^6.0.41",
+    "ngraph.graph": "^20.0.1",
+    "ngraph.path": "^1.4.0",
     "socket.io-client": "^4.4.1",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.5"

@@ -1,3 +1,7 @@
+let createGraph = require("ngraph.graph")
+import { Graph } from "ngraph.graph";
+import { aStar } from "ngraph.path";
+
 export type Position = {
 	x: number;
 	y: number;
@@ -28,6 +32,8 @@ export interface WorkerT {
 	hunger: number;
 	thirst: number;
 	position: Position;
+	target: Position | undefined;
+	way: Position[];
 }
 
 interface Resources {
@@ -44,7 +50,6 @@ export type MapRoom = {
 	type: string;
 	level: number;
 	position: Position;
-	neighboringRooms: MapRoom[];
 };
 
 type Rooms = {
@@ -60,6 +65,7 @@ type Config = {
 };
 
 export class Game {
+	_graph: Graph = createGraph();
 	_resources: Resources = {
 		wood: 10,
 		stone: 10,
@@ -69,14 +75,13 @@ export class Game {
 	};
 	_child = 0;
 	_workers: WorkerT[] = [
-		{ name: "Worker1", hunger: 0, thirst: 0, position: { x: 2, y: 2 } },
-		{ name: "Worker2", hunger: 0, thirst: 0, position: { x: 3, y: 2 } },
+		{ name: "Worker1", hunger: 0, thirst: 0, position: { x: 2, y: 2 }, target: undefined, way: [] },
+		{ name: "Worker2", hunger: 0, thirst: 0, position: { x: 3, y: 2 }, target: undefined, way: [] },
 	];
 	map: MapT = {
 		rooms: [
 			{
 				workers: [],
-				neighboringRooms: [],
 				resources: {
 					wood: 10,
 					stone: 0,
@@ -93,7 +98,6 @@ export class Game {
 			},
 			{
 				workers: [],
-				neighboringRooms: [],
 				resources: {
 					stone: 0,
 					wood: 0,
@@ -110,7 +114,6 @@ export class Game {
 			},
 			{
 				workers: [],
-				neighboringRooms: [],
 				resources: {
 					stone: 10,
 					wood: 10,
@@ -233,6 +236,10 @@ export class Game {
 		},
 	};
 
+	constructor() {
+		this.updateNavMesh();
+	}
+
 	gameLoop() {
 		this.map.rooms.forEach((room) => {
 			if (room.workers.length > 0) {
@@ -288,12 +295,55 @@ export class Game {
 			return
 		}
 
+		let currentRoom: MapRoom | undefined = undefined;
+		for (const room of this.map.rooms) {
+			if (room.workers.includes(worker.name)) {
+				currentRoom = room;
+				break;
+			}
+		}
+
+		if (currentRoom != undefined) {
+			this.findWay(currentRoom, targetRoom);
+		} else {
+			console.log("room not found!!")
+		}
+
 		this.removeWorker(worker);
+
+		worker.target = {x: targetRoom.position.x+targetRoom.workers.length, y: targetRoom.position.y}
 
 		worker.position.x = targetRoom.position.x+targetRoom.workers.length;
 		worker.position.y = targetRoom.position.y;
 
 		if (!targetRoom.workers.includes(worker.name)) targetRoom.workers.push(worker.name);
+	}
+	findWay(startRoom: MapRoom, targetRoom: MapRoom): Position[] | undefined {
+		let pathFinder = aStar(this._graph, {
+			distance(fromNode, toNode) {
+				// In this case we have coordinates. Lets use them as
+				// distance between two nodes:
+				let dx = fromNode.data.x - toNode.data.x;
+				let dy = fromNode.data.y - toNode.data.y;
+
+				return Math.sqrt(dx * dx + dy * dy);
+			},
+			heuristic(fromNode, toNode) {
+				// this is where we "guess" distance between two nodes.
+				// In this particular case our guess is the same as our distance
+				// function:
+				let dx = fromNode.data.x - toNode.data.x;
+				let dy = fromNode.data.y - toNode.data.y;
+
+				return Math.sqrt(dx * dx + dy * dy);
+			}
+		});
+		const left = positionID({x: startRoom.position.x, y: startRoom.position.y});
+		const right = positionID({x: targetRoom.position.x, y: targetRoom.position.y});
+		let path = pathFinder.find(left, right);
+		console.log(path)
+
+		return undefined
 	}
 	enoughResourcesToBuildAvailable(room: RoomConfig) {
 		const config = this.config();
@@ -342,7 +392,6 @@ export class Game {
 			this._resources.stone -= config.rooms[room.type].costs.stone;
 			this.map.rooms.push({
 				workers: [],
-				neighboringRooms: [],
 				resources: {
 					wood: 0,
 					stone: 0,
@@ -361,7 +410,12 @@ export class Game {
 	}
 	updateNavMesh() {
 		this.map.rooms.forEach((a) => {
-			a.neighboringRooms = [];
+			for(let i = 0; i < this._config.rooms[a.type].width; i++) {
+				this._graph.addNode(positionID({x: a.position.x+i, y: a.position.y}), {x: a.position.x, y: a.position.y});
+			}
+		})
+
+		this.map.rooms.forEach((a) => {
 			this.map.rooms.forEach((b) => {
 				if (a == b) {
 					return
@@ -371,14 +425,18 @@ export class Game {
 					if (b.position.y-1 == a.position.y || b.position.y+1 == a.position.y) {
 					} else if (b.position.y == a.position.y) {
 						if (b.position.x == a.position.x-1 || b.position.x+this._config.rooms[b.type].width-1 == a.position.x) {
-							a.neighboringRooms.push(b)
+							const left = positionID({x: a.position.x, y: a.position.y});
+							const right = positionID({x: b.position.x, y: b.position.y});
+							this._graph.addLink(left, right);
 						}
 					}
 					return
 				}
 
 				if (b.position.y == a.position.y && (b.position.x == a.position.x-1 || b.position.x+this._config.rooms[b.type].width-1 == a.position.x)) {
-					a.neighboringRooms.push(b)
+					const left = positionID({x: a.position.x, y: a.position.y});
+					const right = positionID({x: b.position.x, y: b.position.y});
+					this._graph.addLink(left, right);
 				}
 			})
 		})
@@ -400,7 +458,7 @@ export class Game {
 		if(this._child > 0.99)
 		{
 			// new worker
-			this._workers.push({ name: `Worker${this.workers.length+1}`, hunger: 0, thirst: 0, position: { x: room.position.x, y: room.position.y } });
+			this._workers.push({ name: `Worker${this.workers.length+1}`, hunger: 0, thirst: 0, position: { x: room.position.x, y: room.position.y }, target: undefined, way: [] });
 			this._child = 0;
 		}
 	}
@@ -425,4 +483,8 @@ export class Game {
 	workers(): WorkerT[] {
 		return this._workers;
 	}
+}
+
+function positionID(pos: Position): string {
+	return pos.x + ":" + pos.y
 }
