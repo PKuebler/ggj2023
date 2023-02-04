@@ -66,6 +66,7 @@ type Config = {
 };
 
 export class Game {
+	_tick: number = 0;
 	_graph: Graph = createGraph();
 	_resources: Resources = {
 		wood: 10,
@@ -241,7 +242,26 @@ export class Game {
 		this.updateNavMesh();
 	}
 
-	gameLoop() {
+	gameLoop(delta: number) {
+		this._tick += delta;
+
+		if (this._tick < 1000) {
+			return
+		}
+		this._tick = 0;
+
+		this._workers.forEach((worker) => {
+			//console.log(worker.way);
+			if (worker.way.length === 0) {
+				return;
+			}
+			const element = worker.way.pop();
+			if (element) {
+				worker.position.x = element.x;
+				worker.position.y = element.y;
+			}
+		})
+
 		this.map.rooms.forEach((room) => {
 			if (room.workers.length > 0) {
 				room.workers.forEach((worker) => {
@@ -281,17 +301,6 @@ export class Game {
 				});
 			}
 		});
-		this._workers.forEach((worker) => {
-			//console.log(worker.way);
-			if (worker.way.length === 0) {
-				return;
-			}
-			const element = worker.way.pop();
-			if (element) {
-				worker.position.x = element.x;
-				worker.position.y = element.y;
-			}
-		})
 	}
 	removeWorker(worker: WorkerT) {
 		this.map.rooms.forEach((room) => {
@@ -323,7 +332,7 @@ export class Game {
 		}
 
 		worker.target = {x: targetRoom.position.x+targetRoom.workers.length, y: targetRoom.position.y}
-		worker.way = this.findWay({x: worker.position.x, y: worker.position.y}, {x: targetRoom.position.x, y: targetRoom.position.y});
+		worker.way = this.findWay({x: worker.position.x, y: worker.position.y}, {x: worker.target.x, y: worker.target.y});
 		if (worker.way.length == 0) {
 			console.log("Oh no, no way!")
 			return

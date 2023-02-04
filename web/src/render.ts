@@ -74,7 +74,7 @@ export class Renderer {
 		this._loader.load();
 	}
 
-	draw(now: number) {
+	draw(delta: number) {
 		// draw background
 		this._ctx.fillStyle = "rgb(16, 17, 18)";
 		this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);

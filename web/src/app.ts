@@ -19,6 +19,7 @@ class App {
 	_game: Game
 	_selectedBlueprint: RoomConfig | undefined;
 	_selectedWorker: WorkerT | undefined;
+	_last: number = 0;
 
 	constructor(game: Game, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this._canvas = canvas;
@@ -28,8 +29,12 @@ class App {
 	}
 
 	startLoop(now: number) {
-		this._renderer.draw(now)
+		const delta = now - this._last;
+		this._game.gameLoop(delta);
+		this._renderer.draw(delta)
 		window.requestAnimationFrame(this.startLoop.bind(this));
+
+		this._last = now;
 	}
 
 	click(x: number, y: number) {
@@ -80,7 +85,4 @@ function startApp(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) 
 	})
 
 	app.startLoop(0);
-	setInterval(() => {
-		game.gameLoop();
-	}, 1000);
 }
