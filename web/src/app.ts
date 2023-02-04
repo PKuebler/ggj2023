@@ -52,7 +52,7 @@ class App {
 			} else if (this._renderer.getMode() === "move" && this._selectedWorker) {
 				const room = this._renderer.roomOnScreen(x,y)
 				if (room) {
-					this._game.moveWorker(this._selectedWorker, {x:room.position.x, y:room.position.y})
+					this._game.moveWorker(this._selectedWorker, room)
 				}
 				this._selectedWorker = undefined;
 			}

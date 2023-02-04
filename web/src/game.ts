@@ -227,6 +227,7 @@ export class Game {
 			},
 		},
 	};
+
 	gameLoop() {
 		this.map.rooms.forEach((room) => {
 			if (room.workers.length > 0) {
@@ -248,7 +249,7 @@ export class Game {
 						useWorker.thirst += 0.1;
 						if (useWorker.hunger > 1 || useWorker.thirst > 1) {
 							console.log("Worker is dead");
-							this.moveWorker(useWorker, { x: 0, y: 0 });
+							this.removeWorker(useWorker);
 							this._workers = this._workers.filter(
 								(workerT) => workerT.name !== worker,
 							);
@@ -268,22 +269,26 @@ export class Game {
 			}
 		});
 	}
-	moveWorker(worker: WorkerT, position: Position) {
-		worker.position = position;
+	removeWorker(worker: WorkerT) {
 		this.map.rooms.forEach((room) => {
-			if (
-				room.position.x === Math.floor(position.x) &&
-				room.position.y === Math.floor(position.y)
-			) {
-				if (!room.workers.includes(worker.name)) room.workers.push(worker.name);
-			} else {
-				room.workers.forEach((workerName, index) => {
-					if (workerName === worker.name) {
-						room.workers.splice(index, 1);
-					}
-				});
-			}
+			room.workers.forEach((workerName, index) => {
+				if (workerName === worker.name) {
+					room.workers.splice(index, 1);
+				}
+			});
 		});
+	}
+	moveWorker(worker: WorkerT, targetRoom: MapRoom) {
+		if (targetRoom.workers.length >= this._config.rooms[targetRoom.type].width) {
+			return
+		}
+
+		this.removeWorker(worker);
+
+		worker.position.x = targetRoom.position.x+targetRoom.workers.length;
+		worker.position.y = targetRoom.position.y;
+
+		if (!targetRoom.workers.includes(worker.name)) targetRoom.workers.push(worker.name);
 	}
 	enoughResourcesToBuildAvailable(room: RoomConfig) {
 		const config = this.config();
