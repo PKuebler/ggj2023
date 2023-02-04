@@ -39,11 +39,12 @@ export class Renderer {
 
 		this._mode = "inspect";
 
-		this._workerSprite = Sprite{
+		this._workerSprite = {
 			x: 10,
 			y: 0
 		};
-		this._workerHoverSprite = Sprite{
+
+		this._workerHoverSprite = {
 			x: 11,
 			y: 0
 		};
@@ -101,7 +102,7 @@ export class Renderer {
 		// workers
 		this._game.workers().forEach((worker) => {
 			const screenPos = this.mapToScreen(worker.position.x, worker.position.y)
-			this._ctx.drawImage(ui, this._workerSprite.x*this._tileWidth, this._workerSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
+			this._ctx.drawImage(ground, this._workerSprite.x*this._tileWidth, this._workerSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
 		})
 
 		// ui

@@ -66,7 +66,7 @@ export class Game {
 		cookedMushroom: 10,
 		waterBucket: 10,
 	};
-	_workers: WorkerT[] = [{ name: "Dieter", hunger: 0, thirst: 0, position: { x: 1, y: 1 }}];
+	_workers: WorkerT[] = [{ name: "Dieter", hunger: 0, thirst: 0, position: { x: 2, y: 2 }}];
 	map: MapT = {
 		rooms: [
 			{
