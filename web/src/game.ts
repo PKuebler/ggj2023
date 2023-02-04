@@ -44,6 +44,7 @@ export type MapRoom = {
 	type: string;
 	level: number;
 	position: Position;
+	neighboringRooms: MapRoom[];
 };
 
 type Rooms = {
@@ -75,6 +76,7 @@ export class Game {
 		rooms: [
 			{
 				workers: [],
+				neighboringRooms: [],
 				resources: {
 					wood: 10,
 					stone: 0,
@@ -91,6 +93,7 @@ export class Game {
 			},
 			{
 				workers: [],
+				neighboringRooms: [],
 				resources: {
 					stone: 0,
 					wood: 0,
@@ -107,6 +110,7 @@ export class Game {
 			},
 			{
 				workers: [],
+				neighboringRooms: [],
 				resources: {
 					stone: 10,
 					wood: 10,
@@ -338,6 +342,7 @@ export class Game {
 			this._resources.stone -= config.rooms[room.type].costs.stone;
 			this.map.rooms.push({
 				workers: [],
+				neighboringRooms: [],
 				resources: {
 					wood: 0,
 					stone: 0,
@@ -349,9 +354,34 @@ export class Game {
 				level: 1.0,
 				position: position,
 			});
+			this.updateNavMesh();
 			return true;
 		}
 		return false;
+	}
+	updateNavMesh() {
+		this.map.rooms.forEach((a) => {
+			a.neighboringRooms = [];
+			this.map.rooms.forEach((b) => {
+				if (a == b) {
+					return
+				}
+
+				if (a.type == "staircase") {
+					if (b.position.y-1 == a.position.y || b.position.y+1 == a.position.y) {
+					} else if (b.position.y == a.position.y) {
+						if (b.position.x == a.position.x-1 || b.position.x+this._config.rooms[b.type].width-1 == a.position.x) {
+							a.neighboringRooms.push(b)
+						}
+					}
+					return
+				}
+
+				if (b.position.y == a.position.y && (b.position.x == a.position.x-1 || b.position.x+this._config.rooms[b.type].width-1 == a.position.x)) {
+					a.neighboringRooms.push(b)
+				}
+			})
+		})
 	}
 	mushroom_nursery(room: MapRoom) {
 		this._resources.mushroom += 1 * room.level;
