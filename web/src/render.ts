@@ -66,7 +66,7 @@ export class Renderer {
 
 		// wait for image loading
 		if (!this._loader.finish) {
-			this._ctx.fillText('Load Assets: ' + this._loader.process, 20, 20);
+			this._ctx.fillText(`Load Assets: ${this._loader.process}`, 20, 20);
 			return
 		}
 
@@ -91,7 +91,7 @@ export class Renderer {
 			const screenPosEnd = this.mapToScreen(this._hoverRoom.position.x+sprites.length-1, this._hoverRoom.position.y)
 			this._ctx.drawImage(ui, 2*this._tileWidth, 0*this._tileHeight, this._tileWidth, this._tileHeight, screenPosStart.x, screenPosStart.y, this._tileWidth, this._tileHeight);
 			this._ctx.drawImage(ui, 3*this._tileWidth, 0*this._tileHeight, this._tileWidth, this._tileHeight, screenPosEnd.x, screenPosEnd.y, this._tileWidth, this._tileHeight);
-		} else if (this._mode == "build") {
+		} else if (this._mode === "build") {
 			// only if build mode
 			const mapPos = this.screenToMap(this._hoverX, this._hoverY)
 
@@ -115,7 +115,7 @@ export class Renderer {
 		this._ctx.fillStyle = "white";
 		const resources = this._game.resources()
 
-		this._ctx.fillText('Wood: '+resources.wood+' Stone: '+resources.stone+' Mushroom: '+resources.mushroom+' CookedMushroom: '+resources.cookedMushroom+' WaterBucket: '+resources.waterBucket, 20, 20);
+		this._ctx.fillText(`Wood: ${resources.wood} Stone: ${resources.stone} Mushroom: ${resources.mushroom} CookedMushroom: ${resources.cookedMushroom} WaterBucket: ${resources.waterBucket}`, 20, 20);
 	}
 
 	setMode(mode: string) {
