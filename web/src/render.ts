@@ -119,7 +119,7 @@ export class Renderer {
 
 		// workers
 		this._game.workers().forEach((worker) => {
-			const screenPos = this.mapToScreen(worker.position.x, worker.position.y)
+			const screenPos = this.mapToScreen(worker.renderPosition.x, worker.renderPosition.y)
 			this._ctx.drawImage(ground, this._workerSprite.x*this._tileWidth, this._workerSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
 
 			if (worker.thirst > 0.7) {
@@ -128,7 +128,7 @@ export class Renderer {
 		})
 
 		if (this._hoverWorker) {
-			const screenPos = this.mapToScreen(this._hoverWorker.position.x, this._hoverWorker.position.y)
+			const screenPos = this.mapToScreen(this._hoverWorker.renderPosition.x, this._hoverWorker.renderPosition.y)
 			this._ctx.drawImage(ground, this._workerHoverSprite.x*this._tileWidth, this._workerHoverSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
 		}
 

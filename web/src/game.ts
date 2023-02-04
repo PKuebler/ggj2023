@@ -33,6 +33,7 @@ export interface WorkerT {
 	hunger: number;
 	thirst: number;
 	position: Position;
+	renderPosition: Position;
 	target: Position | undefined;
 	way: Position[];
 }
@@ -77,8 +78,8 @@ export class Game {
 	};
 	_child = 0;
 	_workers: WorkerT[] = [
-		{ name: "Worker1", hunger: 0, thirst: 0, position: { x: 2, y: 2 }, target: undefined, way: [] },
-		{ name: "Worker2", hunger: 0, thirst: 0, position: { x: 3, y: 2 }, target: undefined, way: [] },
+		{ name: "Worker1", hunger: 0, thirst: 0, position: { x: 2, y: 2 }, renderPosition: { x: 2, y: 2}, target: undefined, way: [] },
+		{ name: "Worker2", hunger: 0, thirst: 0, position: { x: 3, y: 2 }, renderPosition: { x: 3, y: 2}, target: undefined, way: [] },
 	];
 	map: MapT = {
 		rooms: [
@@ -244,6 +245,15 @@ export class Game {
 
 	gameLoop(delta: number) {
 		this._tick += delta;
+
+		this._workers.forEach((worker) => {
+			if (worker.way.length === 0) {
+				return;
+			}
+			const element = worker.way[worker.way.length-1];
+			worker.renderPosition.x = mapRange(this._tick, 0, 1000, worker.position.x, element.x)
+			worker.renderPosition.y = mapRange(this._tick, 0, 1000, worker.position.y, element.y)
+		})
 
 		if (this._tick < 1000) {
 			return
@@ -535,6 +545,7 @@ export class Game {
 				hunger: 0,
 				thirst: 0,
 				position: { x: room.position.x, y: room.position.y },
+				renderPosition: { x: room.position.x, y: room.position.y },
 				target: undefined,
 				way: []
 			});
@@ -575,4 +586,11 @@ export class Game {
 
 function positionID(pos: Position): string {
 	return `${pos.x}:${pos.y}`
+}
+
+function mapRange(value: number, a: number, b: number, c: number, d: number): number {
+	// first map value from (a..b) to (0..1)
+	value = (value - a) / (b - a);
+	// then map it from (0..1) to (c..d) and return it
+	return c + value * (d - c);
 }
