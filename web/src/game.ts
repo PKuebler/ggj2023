@@ -236,6 +236,16 @@ export class Game {
 			}
 		});
 	}
+	canBuildRoom(room: RoomConfig) {
+		const config = this.config();
+		if (config.rooms[room.type].costs.wood >= this._resources.wood) {
+			return false;
+		}
+		if (config.rooms[room.type].costs.stone >= this._resources.stone) {
+			return false;
+		}
+		return true;
+	}
 	buildRoom(room: RoomConfig, position: Position) {
 		const config = this.config();
 		if (config.rooms[room.type].costs.wood >= this._resources.wood) {
