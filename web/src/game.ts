@@ -307,7 +307,7 @@ export class Game {
 		}
 
 		if (currentRoom !== undefined) {
-			this.findWay(currentRoom, targetRoom);
+			worker.way = this.findWay(currentRoom, targetRoom);
 		} else {
 			console.log("room not found!!")
 		}
@@ -322,7 +322,7 @@ export class Game {
 		if (!targetRoom.workers.includes(worker.name))
 			targetRoom.workers.push(worker.name);
 	}
-	findWay(startRoom: MapRoom, targetRoom: MapRoom): Position[] | undefined {
+	findWay(startRoom: MapRoom, targetRoom: MapRoom): Position[] {
 		let pathFinder = aStar(this._graph, {
 			distance(fromNode, toNode) {
 				// In this case we have coordinates. Lets use them as
@@ -344,10 +344,15 @@ export class Game {
 		});
 		const left = positionID({x: startRoom.position.x, y: startRoom.position.y});
 		const right = positionID({x: targetRoom.position.x, y: targetRoom.position.y});
-		let path = pathFinder.find(left, right);
-		console.log(path)
+		let way = pathFinder.find(left, right);
 
-		return undefined
+		if (way.length == 0) {
+			return [];
+		}
+
+		return way.map((item) => {
+			return {x: item.data.x, y: item.data.y}
+		})
 	}
 	enoughResourcesToBuildAvailable(room: RoomConfig) {
 		const config = this.config();
