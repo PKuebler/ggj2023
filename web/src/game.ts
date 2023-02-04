@@ -395,7 +395,7 @@ export class Game {
 	}
 	bedroom(room: MapRoom) {
 		if(room.workers.length === 2) {
-			this._child += 0.5;
+			this._child += 0.05;
 		}
 		if(this._child > 0.99)
 		{
