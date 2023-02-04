@@ -209,6 +209,20 @@ export class Game {
 				time: 10,
 				type: "lunchroom",
 			},
+			bedroom: {
+				sprites: [
+					{ x: 16, y: 0 },
+				],
+				uiButton: { x: 16, y: 0 },
+				uiDisabledButton: { x: 17, y: 0 },
+				width: 1,
+				costs: {
+					wood: 2,
+					stone: 3,
+				},
+				time: 10,
+				type: "bedroom",
+			},
 		},
 	};
 	gameLoop() {
@@ -268,7 +282,7 @@ export class Game {
 			}
 		});
 	}
-	canBuildRoom(room: RoomConfig) {
+	enoughResourcesToBuildAvailable(room: RoomConfig) {
 		const config = this.config();
 		if (config.rooms[room.type].costs.wood >= this._resources.wood) {
 			return false;
@@ -280,17 +294,11 @@ export class Game {
 	}
 	buildRoom(room: RoomConfig, position: Position) {
 		const config = this.config();
-		if (config.rooms[room.type].costs.wood >= this._resources.wood) {
+		if (!this.enoughResourcesToBuildAvailable(room)) {
 			console.log(
-				`Not enough wood for ${room.type} at position X:${position.x} Y:${position.y}`,
+				`Not enough resources for ${room.type} at position X:${position.x} Y:${position.y}`,
 			);
-			return false;
-		}
-		if (config.rooms[room.type].costs.stone >= this._resources.stone) {
-			console.log(
-				`Not enough stone for ${room.type} at position X:${position.x} Y:${position.y}`,
-			);
-			return false;
+			return;
 		}
 		let canbuild = true;
 		this.map.rooms.forEach((roomT) => {

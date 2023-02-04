@@ -137,7 +137,7 @@ export class Renderer {
 		for (let i = 0; i < roomNames.length; i++) {
 			const room = config.rooms[roomNames[i]];
 			let sprite = room.uiButton;
-			if (!this._game.canBuildRoom(room)) {
+			if (!this._game.enoughResourcesToBuildAvailable(room)) {
 				sprite = room.uiDisabledButton;
 			}
 			this._ctx.drawImage(ui, sprite.x*this._tileWidth, sprite.y*this._tileHeight, this._tileWidth, this._tileHeight, this._uiX+i*this._tileWidth, this._uiY, this._tileWidth, this._tileHeight);

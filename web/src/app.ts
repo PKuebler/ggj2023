@@ -36,7 +36,7 @@ class App {
 		const clickedBlueprint = this._renderer.uiOnScreen(x,y)
 		const clickedWorker = this._renderer.workerOnScreen(x,y)
 		if (clickedBlueprint) {
-			if (this._game.canBuildRoom(clickedBlueprint)) {
+			if (this._game.enoughResourcesToBuildAvailable(clickedBlueprint)) {
 				this._renderer.setMode("build")
 				this._selectedBlueprint = clickedBlueprint;
 			}
