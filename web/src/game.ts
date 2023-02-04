@@ -194,12 +194,27 @@ export class Game {
 				time: 10,
 				type: "spring",
 			},
+			lunchroom: {
+				sprites: [{ x: 1, y: 0 }],
+				uiButton: { x: 6, y: 0 },
+				uiDisabledButton: { x: 10, y: 0 },
+				width: 1,
+				costs: {
+					wood: 2,
+					stone: 3,
+				},
+				time: 10,
+				type: "lunchroom",
+			},
 		},
 	};
 	gameLoop() {
 		this.map.rooms.forEach((room) => {
 			if (room.workers.length > 0) {
 				room.workers.forEach((worker) => {
+					let useWorker = this._workers.filter(
+						(workerT) => workerT.name === worker,
+					)[0];
 					room.type === "mushroom_nursery" && this.mushroom_nursery(room);
 					room.type === "kitchen" && this.kitchen(room);
 					room.type === "quarry" && this.quarry(room);
@@ -209,9 +224,6 @@ export class Game {
 						room.type === "kitchen" ||
 						room.type === "quarry"
 					) {
-						let useWorker = this._workers.filter(
-							(workerT) => workerT.name === worker,
-						)[0];
 						useWorker.hunger += 0.1;
 						useWorker.thirst += 0.1;
 						if (useWorker.hunger > 1 || useWorker.thirst > 1) {
@@ -223,9 +235,6 @@ export class Game {
 						}
 					}
 					if (room.type === "lunchroom") {
-						let useWorker = this._workers.filter(
-							(workerT) => workerT.name === worker,
-						)[0];
 						if (this._resources.cookedMushroom > 0 && useWorker.hunger > 0.5) {
 							useWorker.hunger -= 0.5;
 							this._resources.cookedMushroom -= 1;
