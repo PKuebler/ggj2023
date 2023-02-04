@@ -1,5 +1,5 @@
 import { Loader } from './loader';
-import { Game, RoomConfig, MapRoom, Sprite } from './game';
+import { Game, RoomConfig, MapRoom, Sprite, Position, WorkerT } from './game';
 
 export class Renderer {
 	_game: Game;
@@ -13,6 +13,7 @@ export class Renderer {
 	_hoverX: number;
 	_hoverY: number;
 	_hoverRoom: MapRoom | undefined;
+	_hoverWorker: WorkerT | undefined;
 
 	_uiX: number;
 	_uiY: number;
@@ -21,6 +22,8 @@ export class Renderer {
 
 	_workerSprite: Sprite;
 	_workerHoverSprite: Sprite;
+	_workerAreaMin: Position;
+	_workerAreaMax: Position;
 
 	constructor(game: Game, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this._game = game
@@ -33,6 +36,7 @@ export class Renderer {
 		this._hoverX = 0;
 		this._hoverY = 0;
 		this._hoverRoom = undefined;
+		this._hoverWorker = undefined;
 
 		this._uiX = 0;
 		this._uiY = this._canvas.height-62;
@@ -48,6 +52,15 @@ export class Renderer {
 			x: 11,
 			y: 0
 		};
+
+		this._workerAreaMin = {
+			x: 24,
+			y: 25,
+		}
+		this._workerAreaMax = {
+			x: 40,
+			y: 64,
+		}
 
 		this._loader = new Loader({
 			tile_ground: 'assets/ground.png',
@@ -104,6 +117,11 @@ export class Renderer {
 			const screenPos = this.mapToScreen(worker.position.x, worker.position.y)
 			this._ctx.drawImage(ground, this._workerSprite.x*this._tileWidth, this._workerSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
 		})
+
+		if (this._hoverWorker) {
+			const screenPos = this.mapToScreen(this._hoverWorker.position.x, this._hoverWorker.position.y)
+			this._ctx.drawImage(ground, this._workerHoverSprite.x*this._tileWidth, this._workerHoverSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
+		}
 
 		// ui
 		const roomNames = Object.keys(config.rooms)
@@ -165,11 +183,33 @@ export class Renderer {
 		return undefined
 	}
 
+	workerOnScreen(screenX: number, screenY: number): WorkerT | undefined {
+		const workers = this._game.workers()
+		for (const worker of workers) {
+			const workerPos = this.mapToScreen(worker.position.x, worker.position.y)
+			const minX = workerPos.x + this._workerAreaMin.x
+			const maxX = workerPos.x + this._workerAreaMax.x
+			const minY = workerPos.y + this._workerAreaMin.y
+			const maxY = workerPos.y + this._workerAreaMax.y
+
+			if (screenX < minX || screenY < minY) {
+				continue
+			}
+
+			if (screenX > maxX || screenY > maxY) {
+				continue
+			}
+
+			return worker
+		}
+	}
+
 	hoverScreen(screenX: number, screenY: number) {
 		this._hoverX = screenX
 		this._hoverY = screenY
 
 		this._hoverRoom = this.roomOnScreen(screenX, screenY)
+		this._hoverWorker = this.workerOnScreen(screenX, screenY)
 	}
 
 	screenToMap(screenX: number, screenY: number) {

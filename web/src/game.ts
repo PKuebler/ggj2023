@@ -1,4 +1,4 @@
-type Position = {
+export type Position = {
 	x: number;
 	y: number;
 };
@@ -23,7 +23,7 @@ export type RoomConfig = {
 	type: string;
 };
 
-interface WorkerT {
+export interface WorkerT {
 	name: string;
 	hunger: number;
 	thirst: number;

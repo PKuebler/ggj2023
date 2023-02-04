@@ -1,4 +1,4 @@
-import { Game, RoomConfig } from './game';
+import { Game, RoomConfig, WorkerT } from './game';
 import { Renderer } from './render';
 
 window.addEventListener('load', () => {
@@ -17,7 +17,8 @@ class App {
 	_context: CanvasRenderingContext2D;
 	_renderer: Renderer
 	_game: Game
-	_blueprint: RoomConfig | undefined;
+	_selectedBlueprint: RoomConfig | undefined;
+	_selectedWorker: WorkerT | undefined;
 
 	constructor(game: Game, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this._canvas = canvas;
@@ -33,14 +34,25 @@ class App {
 
 	click(x: number, y: number) {
 		const clickedBlueprint = this._renderer.uiOnScreen(x,y)
+		const clickedWorker = this._renderer.workerOnScreen(x,y)
 		if (clickedBlueprint) {
 			this._renderer.setMode("build")
-			this._blueprint = clickedBlueprint;
+			this._selectedBlueprint = clickedBlueprint;
+		} else if (clickedWorker) {
+			this._renderer.setMode("move")
+			this._selectedWorker = clickedWorker;
 		} else {
-			if (this._renderer.getMode() === "build" && this._blueprint) {
+			if (this._renderer.getMode() === "build" && this._selectedBlueprint) {
 				// build to:
 				const buildPos = this._renderer.screenToMap(x,y)
-				this._game.buildRoom(this._blueprint, {x:buildPos.x, y:buildPos.y})
+				this._game.buildRoom(this._selectedBlueprint, {x:buildPos.x, y:buildPos.y})
+				this._selectedBlueprint = undefined;
+			} else if (this._renderer.getMode() === "move" && this._selectedWorker) {
+				const room = this._renderer.roomOnScreen(x,y)
+				if (room) {
+					this._game.moveWorker(this._selectedWorker, {x:room.position.x, y:room.position.y})
+				}
+				this._selectedWorker = undefined;
 			}
 
 			this._renderer.setMode("inspect")
