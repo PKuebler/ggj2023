@@ -82,6 +82,7 @@ export class Renderer {
 		} else if (this._mode == "build") {
 			// only if build mode
 			const mapPos = this.screenToMap(this._hoverX, this._hoverY)
+
 			const screenPos = this.mapToScreen(mapPos.x, mapPos.y)
 			this._ctx.drawImage(ui, 1*this._tileWidth, 0*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
 		}
@@ -92,6 +93,9 @@ export class Renderer {
 			const room = config.rooms[roomNames[i]];
 			this._ctx.drawImage(ui, room.uiButton.x*this._tileWidth, room.uiButton.y*this._tileHeight, this._tileWidth, this._tileHeight, this._uiX+i*this._tileWidth, this._uiY, this._tileWidth, this._tileHeight);
 		}
+
+		this._ctx.fillStyle = "white";
+		this._ctx.fillText('Resourcen...', 20, 20);
 	}
 
 	setMode(mode: string) {
