@@ -183,9 +183,9 @@ export class Game {
 				type: "staircase",
 			},
 			spring: {
-				sprites: [{ x: 1, y: 0 }],
-				uiButton: { x: 6, y: 0 },
-				uiDisabledButton: { x: 10, y: 0 },
+				sprites: [{ x: 15, y: 0 }],
+				uiButton: { x: 15, y: 0 },
+				uiDisabledButton: { x: 14, y: 0 },
 				width: 1,
 				costs: {
 					wood: 2,
@@ -195,10 +195,13 @@ export class Game {
 				type: "spring",
 			},
 			lunchroom: {
-				sprites: [{ x: 1, y: 0 }],
-				uiButton: { x: 6, y: 0 },
-				uiDisabledButton: { x: 10, y: 0 },
-				width: 1,
+				sprites: [
+					{ x: 13, y: 0 },
+					{ x: 14, y: 0 },
+				],
+				uiButton: { x: 12, y: 0 },
+				uiDisabledButton: { x: 13, y: 0 },
+				width: 2,
 				costs: {
 					wood: 2,
 					stone: 3,
