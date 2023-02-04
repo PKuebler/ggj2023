@@ -242,7 +242,7 @@ export class Game {
 				return;
 			}
 			for(let i = 0; i < withcheck; i++) {
-				if (roomT.position.x === position.x + i) {
+				if (roomT.position.x === position.x - i) {
 					console.log(`Room already exists at position X:${position.x} Y:${position.y}`);
 					canbuild = false;
 					return;
@@ -257,15 +257,15 @@ export class Game {
 			) {
 				this._resources.wood -= config.rooms[room.type].costs.wood;
 				this._resources.stone -= config.rooms[room.type].costs.stone;
+				this.map.rooms.push({
+					workers: [],
+					resources: {},
+					type: room.type,
+					level: 1.0,
+					position: position,
+				});
+				return true;
 			}
-			this.map.rooms.push({
-				workers: [],
-				resources: {},
-				type: room.type,
-				level: 1.0,
-				position: position,
-			});
-			return true;
 		}
 		return false;
 	}
