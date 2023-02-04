@@ -66,8 +66,10 @@ export class Game {
 		cookedMushroom: 10,
 		waterBucket: 10,
 	};
+	_child = 0;
 	_workers: WorkerT[] = [
-		{ name: "Dieter", hunger: 0, thirst: 0, position: { x: 2, y: 2 } },
+		{ name: "Worker1", hunger: 0, thirst: 0, position: { x: 2, y: 2 } },
+		{ name: "Worker2", hunger: 0, thirst: 0, position: { x: 3, y: 2 } },
 	];
 	map: MapT = {
 		rooms: [
@@ -236,6 +238,7 @@ export class Game {
 					room.type === "kitchen" && this.kitchen(room);
 					room.type === "quarry" && this.quarry(room);
 					room.type === "spring" && this.spring(room);
+					room.type === "bedroom" && this.bedroom(room);
 					if (
 						room.type === "mushroom_nursery" ||
 						room.type === "kitchen" ||
@@ -304,22 +307,21 @@ export class Game {
 		let isRoomNearBy = false;
 		this.map.rooms.forEach((roomOnMap) => {
 			let roomWidth = this._config.rooms[roomOnMap.type].width;
-
 			if (!isRoomNearBy) {
-				if (roomOnMap.type == "staircase") {
-					if (position.y == roomOnMap.position.y && (position.x == roomOnMap.position.x-1 || position.x == roomOnMap.position.x+roomWidth)) {
+				if (roomOnMap.type === "staircase") {
+					if (position.y === roomOnMap.position.y && (position.x === roomOnMap.position.x-1 || position.x === roomOnMap.position.x+roomWidth)) {
 						isRoomNearBy = true;
-					} else if ((position.y == roomOnMap.position.y-1 || position.y == roomOnMap.position.y+1) && position.x == roomOnMap.position.x) {
+					} else if ((position.y === roomOnMap.position.y-1 || position.y === roomOnMap.position.y+1) && position.x === roomOnMap.position.x) {
 						isRoomNearBy = true;
 					}
 				} else {
-					if (position.y == roomOnMap.position.y && (position.x == roomOnMap.position.x-1 || position.x == roomOnMap.position.x+roomWidth)) {
+					if (position.y === roomOnMap.position.y && (position.x === roomOnMap.position.x-1 || position.x === roomOnMap.position.x+roomWidth)) {
 						isRoomNearBy = true;
 					}
 				}
 			}
 
-			if (position.y == roomOnMap.position.y && position.x >= roomOnMap.position.x && position.x < roomOnMap.position.x+roomWidth) {
+			if (position.y === roomOnMap.position.y && position.x >= roomOnMap.position.x && position.x < roomOnMap.position.x+roomWidth) {
 				canbuild = false;
 				return;
 			}
@@ -376,6 +378,17 @@ export class Game {
 		if (this._resources.mushroom > 0) {
 			this._resources.cookedMushroom += 1 * room.level;
 			this._resources.mushroom -= 1 * room.level;
+		}
+	}
+	bedroom(room: MapRoom) {
+		if(room.workers.length === 2) {
+			this._child += 0.5;
+		}
+		if(this._child > 0.99)
+		{
+			// new worker
+			this._workers.push({ name: `Worker${this.workers.length+1}`, hunger: 0, thirst: 0, position: { x: room.position.x, y: room.position.y } });
+			this._child = 0;
 		}
 	}
 	quarry(room: MapRoom) {
