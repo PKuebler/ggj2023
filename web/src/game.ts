@@ -257,6 +257,7 @@ export class Game {
 			}
 			const element = worker.way.pop();
 			if (element) {
+				console.log(element);
 				worker.position.x = element.x;
 				worker.position.y = element.y;
 			}
@@ -318,25 +319,14 @@ export class Game {
 			return;
 		}
 
-		let currentRoom: MapRoom | undefined = undefined;
-		for (const room of this.map.rooms) {
-			if (room.workers.includes(worker.name)) {
-				currentRoom = room;
-				break;
-			}
-		}
-
-		if (currentRoom === undefined) {
-			console.log("room not found!!")
-			return;
-		}
-
 		worker.target = {x: targetRoom.position.x+targetRoom.workers.length, y: targetRoom.position.y}
+		console.log(worker.position);
 		worker.way = this.findWay({x: worker.position.x, y: worker.position.y}, {x: worker.target.x, y: worker.target.y});
 		if (worker.way.length == 0) {
 			console.log("Oh no, no way!")
 			return
 		}
+		console.log(worker.way);
 
 		this.removeWorker(worker);
 
@@ -361,7 +351,8 @@ export class Game {
 				let dy = fromNode.data.y - toNode.data.y;
 
 				return Math.sqrt(dx * dx + dy * dy);
-			}
+			},
+			oriented: true
 		});
 		const left = positionID({x: startRoom.x, y: startRoom.y});
 		const right = positionID({x: targetRoom.x, y: targetRoom.y});
@@ -372,6 +363,7 @@ export class Game {
 		}
 
 		return way.map((item) => {
+			console.log(item.data);
 			return {x: item.data.x, y: item.data.y}
 		})
 	}
@@ -458,7 +450,7 @@ export class Game {
 		this._graph = createGraph();
 		this.map.rooms.forEach((a) => {
 			for(let i = 0; i < this._config.rooms[a.type].width; i++) {
-				this._graph.addNode(positionID({x: a.position.x+i, y: a.position.y}), {x: a.position.x, y: a.position.y});
+				this._graph.addNode(positionID({x: a.position.x+i, y: a.position.y}), {x: a.position.x+i, y: a.position.y});
 			}
 		})
 
@@ -470,6 +462,8 @@ export class Game {
 					const right = positionID({x: a.position.x+i+1, y: a.position.y});
 					this._graph.addLink(left, right);
 					this._graph.addLink(right, left);
+					console.log(left, right)
+					console.log(right, left)
 				}
 			}
 
@@ -487,6 +481,7 @@ export class Game {
 							const left = positionID({x: a.position.x, y: a.position.y});
 							const right = positionID({x: b.position.x, y: b.position.y});
 							this._graph.addLink(left, right);
+							console.log(left, right)
 						}
 					} else if (b.position.y === a.position.y) {
 						if (
@@ -497,19 +492,29 @@ export class Game {
 							const left = positionID({x: a.position.x, y: a.position.y});
 							const right = positionID({x: b.position.x, y: b.position.y});
 							this._graph.addLink(left, right);
+							console.log(left, right)
 						}
 					}
 				}
 
-				if (
-					b.position.y === a.position.y &&
-					(b.position.x === a.position.x - 1 ||
-						b.position.x + this._config.rooms[b.type].width ===
-							a.position.x)
-				) {
-					const left = positionID({x: a.position.x, y: a.position.y});
+				if (b.position.y !== a.position.y) {
+					return;
+				}
+
+				// left
+				if (b.position.x + this._config.rooms[b.type].width === a.position.x) {
+					const left = positionID({x: b.position.x + this._config.rooms[b.type].width - 1, y: b.position.y});
+					const right = positionID({x: a.position.x, y: a.position.y});
+					this._graph.addLink(right, left);
+					console.log("<", right, left)
+				}
+
+				// right
+				if (a.position.x + this._config.rooms[a.type].width === b.position.x) {
+					const left = positionID({x: a.position.x + this._config.rooms[a.type].width - 1, y: a.position.y});
 					const right = positionID({x: b.position.x, y: b.position.y});
 					this._graph.addLink(left, right);
+					console.log(">", left, right)
 				}
 			});
 		});
