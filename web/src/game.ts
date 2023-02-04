@@ -430,11 +430,17 @@ export class Game {
 		}
 		if (this._child > 0.99) {
 			// new worker
+			let workername = `Worker${this.workers.length + 1}`;
 			this._workers.push({
-				name: `Worker${this.workers.length + 1}`,
+				name: workername,
 				hunger: 0,
 				thirst: 0,
 				position: { x: room.position.x, y: room.position.y },
+			});
+			this.map.rooms.forEach((roomT) => {
+				if (roomT === room) {
+					roomT.workers.push(workername);
+				}
 			});
 			this._child = 0;
 		}
@@ -459,5 +465,9 @@ export class Game {
 
 	workers(): WorkerT[] {
 		return this._workers;
+	}
+
+	child(): number {
+		return this._child;
 	}
 }
