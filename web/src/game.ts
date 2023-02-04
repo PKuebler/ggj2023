@@ -284,16 +284,19 @@ export class Game {
 		});
 	}
 	moveWorker(worker: WorkerT, targetRoom: MapRoom) {
-		if (targetRoom.workers.length >= this._config.rooms[targetRoom.type].width) {
-			return
+		if (
+			targetRoom.workers.length >= this._config.rooms[targetRoom.type].width
+		) {
+			return;
 		}
 
 		this.removeWorker(worker);
 
-		worker.position.x = targetRoom.position.x+targetRoom.workers.length;
+		worker.position.x = targetRoom.position.x + targetRoom.workers.length;
 		worker.position.y = targetRoom.position.y;
 
-		if (!targetRoom.workers.includes(worker.name)) targetRoom.workers.push(worker.name);
+		if (!targetRoom.workers.includes(worker.name))
+			targetRoom.workers.push(worker.name);
 	}
 	enoughResourcesToBuildAvailable(room: RoomConfig) {
 		const config = this.config();
@@ -319,19 +322,35 @@ export class Game {
 			let roomWidth = this._config.rooms[roomOnMap.type].width;
 			if (!isRoomNearBy) {
 				if (roomOnMap.type === "staircase") {
-					if (position.y === roomOnMap.position.y && (position.x === roomOnMap.position.x-1 || position.x === roomOnMap.position.x+roomWidth)) {
+					if (
+						position.y === roomOnMap.position.y &&
+						(position.x === roomOnMap.position.x - 1 ||
+							position.x === roomOnMap.position.x + roomWidth)
+					) {
 						isRoomNearBy = true;
-					} else if ((position.y === roomOnMap.position.y-1 || position.y === roomOnMap.position.y+1) && position.x === roomOnMap.position.x) {
+					} else if (
+						(position.y === roomOnMap.position.y - 1 ||
+							position.y === roomOnMap.position.y + 1) &&
+						position.x === roomOnMap.position.x
+					) {
 						isRoomNearBy = true;
 					}
 				} else {
-					if (position.y === roomOnMap.position.y && (position.x === roomOnMap.position.x-1 || position.x === roomOnMap.position.x+roomWidth)) {
+					if (
+						position.y === roomOnMap.position.y &&
+						(position.x === roomOnMap.position.x - 1 ||
+							position.x === roomOnMap.position.x + roomWidth)
+					) {
 						isRoomNearBy = true;
 					}
 				}
 			}
 
-			if (position.y === roomOnMap.position.y && position.x >= roomOnMap.position.x && position.x < roomOnMap.position.x+roomWidth) {
+			if (
+				position.y === roomOnMap.position.y &&
+				position.x >= roomOnMap.position.x &&
+				position.x < roomOnMap.position.x + roomWidth
+			) {
 				canbuild = false;
 				return;
 			}
@@ -363,25 +382,37 @@ export class Game {
 		this.map.rooms.forEach((a) => {
 			a.neighboringRooms = [];
 			this.map.rooms.forEach((b) => {
-				if (a == b) {
-					return
+				if (a === b) {
+					return;
 				}
 
-				if (a.type == "staircase") {
-					if (b.position.y-1 == a.position.y || b.position.y+1 == a.position.y) {
-					} else if (b.position.y == a.position.y) {
-						if (b.position.x == a.position.x-1 || b.position.x+this._config.rooms[b.type].width-1 == a.position.x) {
-							a.neighboringRooms.push(b)
+				if (a.type === "staircase") {
+					if (
+						b.position.y - 1 === a.position.y ||
+						b.position.y + 1 === a.position.y
+					) {
+					} else if (b.position.y === a.position.y) {
+						if (
+							b.position.x === a.position.x - 1 ||
+							b.position.x + this._config.rooms[b.type].width - 1 ===
+								a.position.x
+						) {
+							a.neighboringRooms.push(b);
 						}
 					}
-					return
+					return;
 				}
 
-				if (b.position.y == a.position.y && (b.position.x == a.position.x-1 || b.position.x+this._config.rooms[b.type].width-1 == a.position.x)) {
-					a.neighboringRooms.push(b)
+				if (
+					b.position.y === a.position.y &&
+					(b.position.x === a.position.x - 1 ||
+						b.position.x + this._config.rooms[b.type].width - 1 ===
+							a.position.x)
+				) {
+					a.neighboringRooms.push(b);
 				}
-			})
-		})
+			});
+		});
 	}
 	mushroom_nursery(room: MapRoom) {
 		this._resources.mushroom += 1 * room.level;
@@ -394,13 +425,17 @@ export class Game {
 		}
 	}
 	bedroom(room: MapRoom) {
-		if(room.workers.length === 2) {
+		if (room.workers.length === 2) {
 			this._child += 0.05;
 		}
-		if(this._child > 0.99)
-		{
+		if (this._child > 0.99) {
 			// new worker
-			this._workers.push({ name: `Worker${this.workers.length+1}`, hunger: 0, thirst: 0, position: { x: room.position.x, y: room.position.y } });
+			this._workers.push({
+				name: `Worker${this.workers.length + 1}`,
+				hunger: 0,
+				thirst: 0,
+				position: { x: room.position.x, y: room.position.y },
+			});
 			this._child = 0;
 		}
 	}
