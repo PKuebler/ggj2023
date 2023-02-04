@@ -1,6 +1,7 @@
 let createGraph = require("ngraph.graph")
 import { Graph } from "ngraph.graph";
 import { aStar } from "ngraph.path";
+import { getTextOfJSDocComment } from "typescript";
 
 export type Position = {
 	x: number;
@@ -81,7 +82,7 @@ export class Game {
 	map: MapT = {
 		rooms: [
 			{
-				workers: [],
+				workers: ['Worker1', 'Worker2'],
 				resources: {
 					wood: 10,
 					stone: 0,
@@ -305,7 +306,7 @@ export class Game {
 			}
 		}
 
-		if (currentRoom != undefined) {
+		if (currentRoom !== undefined) {
 			this.findWay(currentRoom, targetRoom);
 		} else {
 			console.log("room not found!!")
@@ -533,5 +534,5 @@ export class Game {
 }
 
 function positionID(pos: Position): string {
-	return pos.x + ":" + pos.y
+	return `${pos.x}:${pos.y}`
 }
