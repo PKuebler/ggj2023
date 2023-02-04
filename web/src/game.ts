@@ -214,10 +214,11 @@ export class Game {
 			bedroom: {
 				sprites: [
 					{ x: 16, y: 0 },
+					{ x: 18, y: 0 },
 				],
 				uiButton: { x: 16, y: 0 },
 				uiDisabledButton: { x: 17, y: 0 },
-				width: 1,
+				width: 2,
 				costs: {
 					wood: 2,
 					stone: 3,
