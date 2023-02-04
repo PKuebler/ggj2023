@@ -8,7 +8,7 @@ type Costs = {
 	stone: number;
 };
 
-type Sprite = {
+export type Sprite = {
 	x: number;
 	y: number;
 };
@@ -66,7 +66,7 @@ export class Game {
 		cookedMushroom: 10,
 		waterBucket: 10,
 	};
-	workers: WorkerT[] = [{ name: "Dieter", hunger: 0, thirst: 0, position: { x: 1, y: 1 }}];
+	_workers: WorkerT[] = [{ name: "Dieter", hunger: 0, thirst: 0, position: { x: 2, y: 2 }}];
 	map: MapT = {
 		rooms: [
 			{
@@ -194,7 +194,7 @@ export class Game {
 						room.type === "kitchen" ||
 						room.type === "quarry"
 					) {
-						let useWorker = this.workers.filter(
+						let useWorker = this._workers.filter(
 							(workerT) => workerT.name === worker,
 						)[0];
 						useWorker.hunger += 0.1;
@@ -202,13 +202,13 @@ export class Game {
 						if (useWorker.hunger > 1 || useWorker.thirst > 1) {
 							console.log("Worker is dead");
 							this.moveWorker(useWorker, { x: 0, y: 0 });
-							this.workers = this.workers.filter(
+							this._workers = this._workers.filter(
 								(workerT) => workerT.name !== worker,
 							);
 						}
 					}
 					if (room.type === "lunchroom") {
-						let useWorker = this.workers.filter(
+						let useWorker = this._workers.filter(
 							(workerT) => workerT.name === worker,
 						)[0];
 						if (this._resources.cookedMushroom > 0 && useWorker.hunger > 0.5) {
@@ -331,5 +331,9 @@ export class Game {
 
 	resources(): Resources {
 		return this._resources;
+	}
+
+	workers(): WorkerT[] {
+		return this._workers
 	}
 }

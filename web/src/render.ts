@@ -1,5 +1,5 @@
 import { Loader } from './loader';
-import { Game, RoomConfig, MapRoom } from './game';
+import { Game, RoomConfig, MapRoom, Sprite } from './game';
 
 export class Renderer {
 	_game: Game;
@@ -19,6 +19,9 @@ export class Renderer {
 
 	_mode: string;
 
+	_workerSprite: Sprite;
+	_workerHoverSprite: Sprite;
+
 	constructor(game: Game, canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
 		this._game = game
 		this._canvas = canvas;
@@ -34,7 +37,17 @@ export class Renderer {
 		this._uiX = 0;
 		this._uiY = this._canvas.height-62;
 
-		this._mode = "inspect"
+		this._mode = "inspect";
+
+		this._workerSprite = {
+			x: 10,
+			y: 0
+		};
+
+		this._workerHoverSprite = {
+			x: 11,
+			y: 0
+		};
 
 		this._loader = new Loader({
 			tile_ground: 'assets/ground.png',
@@ -71,7 +84,6 @@ export class Renderer {
 			})
 		})
 
-
 		// hover
 		if (this._hoverRoom) {
 			const sprites = config.rooms[this._hoverRoom.type].sprites
@@ -87,8 +99,14 @@ export class Renderer {
 			this._ctx.drawImage(ui, 1*this._tileWidth, 0*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
 		}
 
+		// workers
+		this._game.workers().forEach((worker) => {
+			const screenPos = this.mapToScreen(worker.position.x, worker.position.y)
+			this._ctx.drawImage(ground, this._workerSprite.x*this._tileWidth, this._workerSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
+		})
+
 		// ui
-		const roomNames = Object.keys(config.rooms)32
+		const roomNames = Object.keys(config.rooms)
 		for (let i = 0; i < roomNames.length; i++) {
 			const room = config.rooms[roomNames[i]];
 			this._ctx.drawImage(ui, room.uiButton.x*this._tileWidth, room.uiButton.y*this._tileHeight, this._tileWidth, this._tileHeight, this._uiX+i*this._tileWidth, this._uiY, this._tileWidth, this._tileHeight);
