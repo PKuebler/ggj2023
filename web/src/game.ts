@@ -462,8 +462,6 @@ export class Game {
 					const right = positionID({x: a.position.x+i+1, y: a.position.y});
 					this._graph.addLink(left, right);
 					this._graph.addLink(right, left);
-					console.log(left, right)
-					console.log(right, left)
 				}
 			}
 
@@ -481,7 +479,6 @@ export class Game {
 							const left = positionID({x: a.position.x, y: a.position.y});
 							const right = positionID({x: b.position.x, y: b.position.y});
 							this._graph.addLink(left, right);
-							console.log(left, right)
 						}
 					} else if (b.position.y === a.position.y) {
 						if (
@@ -492,7 +489,6 @@ export class Game {
 							const left = positionID({x: a.position.x, y: a.position.y});
 							const right = positionID({x: b.position.x, y: b.position.y});
 							this._graph.addLink(left, right);
-							console.log(left, right)
 						}
 					}
 				}
@@ -506,7 +502,6 @@ export class Game {
 					const left = positionID({x: b.position.x + this._config.rooms[b.type].width - 1, y: b.position.y});
 					const right = positionID({x: a.position.x, y: a.position.y});
 					this._graph.addLink(right, left);
-					console.log("<", right, left)
 				}
 
 				// right
@@ -514,7 +509,6 @@ export class Game {
 					const left = positionID({x: a.position.x + this._config.rooms[a.type].width - 1, y: a.position.y});
 					const right = positionID({x: b.position.x, y: b.position.y});
 					this._graph.addLink(left, right);
-					console.log(">", left, right)
 				}
 			});
 		});
