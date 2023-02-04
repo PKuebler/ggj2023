@@ -30,11 +30,11 @@ interface WorkerT {
 }
 
 interface Resources {
-	wood?: number;
-	stone?: number;
-	mushroom?: number;
-	cookedMushroom?: number;
-	waterBucket?: number;
+	wood: number;
+	stone: number;
+	mushroom: number;
+	cookedMushroom: number;
+	waterBucket: number;
 }
 
 export type MapRoom = {
@@ -58,7 +58,13 @@ type Config = {
 };
 
 export class Game {
-	_resources: Resources = {};
+	_resources: Resources = {
+		wood: 10,
+		stone: 10,
+		mushroom: 10,
+		cookedMushroom: 10,
+		waterBucket: 10,
+	};
 	workers: WorkerT[] = [];
 	map: MapT = {
 		rooms: [
@@ -66,7 +72,10 @@ export class Game {
 				workers: [],
 				resources: {
 					wood: 10,
+					stone: 0,
 					mushroom: 10,
+					cookedMushroom: 0,
+					waterBucket: 0,
 				},
 				type: "mushroom_nursery",
 				level: 1.0,
@@ -78,7 +87,11 @@ export class Game {
 			{
 				workers: [],
 				resources: {
+					stone: 0,
+					wood: 0,
+					mushroom: 0,
 					cookedMushroom: 10,
+					waterBucket: 0,
 				},
 				type: "kitchen",
 				level: 1.0,
@@ -91,6 +104,10 @@ export class Game {
 				workers: [],
 				resources: {
 					stone: 10,
+					wood: 10,
+					mushroom: 10,
+					cookedMushroom: 0,
+					waterBucket: 0,
 				},
 				type: "quarry",
 				level: 1.0,
@@ -103,7 +120,7 @@ export class Game {
 	};
 	_config: Config = {
 		rooms: {
-			"kitchen": {
+			kitchen: {
 				sprites: [
 					{ x: 2, y: 0 },
 					{ x: 3, y: 0 },
@@ -117,7 +134,7 @@ export class Game {
 				time: 10,
 				type: "kitchen",
 			},
-			"mushroom_nursery": {
+			mushroom_nursery: {
 				sprites: [
 					{ x: 8, y: 0 },
 					{ x: 9, y: 0 },
@@ -132,7 +149,7 @@ export class Game {
 				time: 10,
 				type: "mushroom_nursery",
 			},
-			"quarry": {
+			quarry: {
 				sprites: [
 					{ x: 5, y: 0 },
 					{ x: 6, y: 0 },
@@ -147,7 +164,7 @@ export class Game {
 				time: 10,
 				type: "quarry",
 			},
-			"staircase": {
+			staircase: {
 				sprites: [{ x: 1, y: 0 }],
 				uiButton: { x: 6, y: 0 },
 				width: 1,
@@ -167,25 +184,33 @@ export class Game {
 					room.type === "mushroom_nursery" && this.mushroom_nursery(room);
 					room.type === "kitchen" && this.kitchen(room);
 					room.type === "quarry" && this.quarry(room);
-					if(room.type === "mushroom_nursery" || room.type === "kitchen" || room.type === "quarry")
-					{
-						let useWorker = this.workers.filter((workerT) => workerT.name === worker)[0];
+					if (
+						room.type === "mushroom_nursery" ||
+						room.type === "kitchen" ||
+						room.type === "quarry"
+					) {
+						let useWorker = this.workers.filter(
+							(workerT) => workerT.name === worker,
+						)[0];
 						useWorker.hunger += 0.1;
 						useWorker.thirst += 0.1;
-						if(useWorker.hunger > 1 || useWorker.thirst > 1) {
+						if (useWorker.hunger > 1 || useWorker.thirst > 1) {
 							console.log("Worker is dead");
 							this.moveWorker(useWorker, { x: 0, y: 0 });
-							this.workers = this.workers.filter((workerT) => workerT.name !== worker);
+							this.workers = this.workers.filter(
+								(workerT) => workerT.name !== worker,
+							);
 						}
 					}
-					if(room.type === "lunchroom")
-					{
-						let useWorker = this.workers.filter((workerT) => workerT.name === worker)[0];
-						if(typeof this._resources.cookedMushroom !== "undefined" && this._resources.cookedMushroom > 0 && useWorker.hunger > 0.5) {
+					if (room.type === "lunchroom") {
+						let useWorker = this.workers.filter(
+							(workerT) => workerT.name === worker,
+						)[0];
+						if (this._resources.cookedMushroom > 0 && useWorker.hunger > 0.5) {
 							useWorker.hunger -= 0.5;
 							this._resources.cookedMushroom -= 1;
 						}
-						if(typeof this._resources.waterBucket !== "undefined" && this._resources.waterBucket > 0 && useWorker.thirst > 0.5) {
+						if (this._resources.waterBucket > 0 && useWorker.thirst > 0.5) {
 							useWorker.thirst -= 0.5;
 							this._resources.waterBucket -= 1;
 						}
@@ -197,11 +222,12 @@ export class Game {
 	moveWorker(worker: WorkerT, position: Position) {
 		worker.position = position;
 		this.map.rooms.forEach((room) => {
-			if (room.position.x === Math.floor(position.x) && room.position.y === Math.floor(position.y)) {
-				if(!room.workers.includes(worker.name))
-					room.workers.push(worker.name);
-			}
-			else {
+			if (
+				room.position.x === Math.floor(position.x) &&
+				room.position.y === Math.floor(position.y)
+			) {
+				if (!room.workers.includes(worker.name)) room.workers.push(worker.name);
+			} else {
 				room.workers.forEach((workerName, index) => {
 					if (workerName === worker.name) {
 						room.workers.splice(index, 1);
@@ -212,19 +238,13 @@ export class Game {
 	}
 	buildRoom(room: RoomConfig, position: Position) {
 		const config = this.config();
-		if (
-			typeof this._resources.wood !== "undefined" &&
-			config.rooms[room.type].costs.wood >= this._resources.wood
-		) {
+		if (config.rooms[room.type].costs.wood >= this._resources.wood) {
 			console.log(
 				`Not enough wood for ${room.type} at position X:${position.x} Y:${position.y}`,
 			);
 			return false;
 		}
-		if (
-			typeof this._resources.stone !== "undefined" &&
-			config.rooms[room.type].costs.stone >= this._resources.stone
-		) {
+		if (config.rooms[room.type].costs.stone >= this._resources.stone) {
 			console.log(
 				`Not enough stone for ${room.type} at position X:${position.x} Y:${position.y}`,
 			);
@@ -237,63 +257,53 @@ export class Game {
 			}
 			let withcheck = this._config.rooms[room.type].width;
 			if (roomT.position.x === position.x) {
-				console.log(`Room already exists at position X:${position.x} Y:${position.y}`);
+				console.log(
+					`Room already exists at position X:${position.x} Y:${position.y}`,
+				);
 				canbuild = false;
 				return;
 			}
-			for(let i = 0; i < withcheck; i++) {
+			for (let i = 0; i < withcheck; i++) {
 				if (roomT.position.x === position.x - i) {
-					console.log(`Room already exists at position X:${position.x} Y:${position.y}`);
+					console.log(
+						`Room already exists at position X:${position.x} Y:${position.y}`,
+					);
 					canbuild = false;
 					return;
 				}
 			}
 		});
-		if(canbuild)
-		{
-			if (
-				typeof this._resources.wood !== "undefined" &&
-				typeof this._resources.stone !== "undefined"
-			) {
-				this._resources.wood -= config.rooms[room.type].costs.wood;
-				this._resources.stone -= config.rooms[room.type].costs.stone;
-				this.map.rooms.push({
-					workers: [],
-					resources: {},
-					type: room.type,
-					level: 1.0,
-					position: position,
-				});
-				return true;
-			}
+		if (canbuild) {
+			this._resources.wood -= config.rooms[room.type].costs.wood;
+			this._resources.stone -= config.rooms[room.type].costs.stone;
+			this.map.rooms.push({
+				workers: [],
+				resources: {
+					wood: 0,
+					stone: 0,
+					mushroom: 0,
+					cookedMushroom: 0,
+					waterBucket: 0,
+				},
+				type: room.type,
+				level: 1.0,
+				position: position,
+			});
+			return true;
 		}
 		return false;
 	}
 	mushroom_nursery(room: MapRoom) {
-		if (typeof this._resources.mushroom === "undefined") {
-			this._resources.mushroom = 1 * room.level;
-		}
 		this._resources.mushroom += 1 * room.level;
-		if (typeof this._resources.wood === "undefined") {
-			this._resources.wood = 1 * room.level;
-		}
 		this._resources.wood += 1 * room.level;
 	}
 	kitchen(room: MapRoom) {
-		if (typeof this._resources.cookedMushroom === "undefined" && typeof this._resources.mushroom !== "undefined" && this._resources.mushroom > 0) {
-			this._resources.cookedMushroom = 1 * room.level;
-			this._resources.mushroom -= 1 * room.level;
-		}
-		else if (typeof this._resources.cookedMushroom !== "undefined" && typeof this._resources.mushroom !== "undefined" && this._resources.mushroom > 0) {
+		if (this._resources.mushroom > 0) {
 			this._resources.cookedMushroom += 1 * room.level;
 			this._resources.mushroom -= 1 * room.level;
 		}
-		// Nope
 	}
 	quarry(room: MapRoom) {
-		if (typeof this._resources.stone === "undefined") {
-			this._resources.stone = 1 * room.level;
-		}
 		this._resources.stone += 1 * room.level;
 	}
 	config(): Config {
