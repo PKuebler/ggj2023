@@ -58,7 +58,7 @@ type Config = {
 };
 
 export class Game {
-	resources: Resources = {};
+	_resources: Resources = {};
 	workers: WorkerT[] = [];
 	map: MapT = {
 		rooms: [
@@ -181,13 +181,13 @@ export class Game {
 					if(room.type === "lunchroom")
 					{
 						let useWorker = this.workers.filter((workerT) => workerT.name === worker)[0];
-						if(typeof this.resources.cookedMushroom !== "undefined" && this.resources.cookedMushroom > 0 && useWorker.hunger > 0.5) {
+						if(typeof this._resources.cookedMushroom !== "undefined" && this._resources.cookedMushroom > 0 && useWorker.hunger > 0.5) {
 							useWorker.hunger -= 0.5;
-							this.resources.cookedMushroom -= 1;
+							this._resources.cookedMushroom -= 1;
 						}
-						if(typeof this.resources.waterBucket !== "undefined" && this.resources.waterBucket > 0 && useWorker.thirst > 0.5) {
+						if(typeof this._resources.waterBucket !== "undefined" && this._resources.waterBucket > 0 && useWorker.thirst > 0.5) {
 							useWorker.thirst -= 0.5;
-							this.resources.waterBucket -= 1;
+							this._resources.waterBucket -= 1;
 						}
 					}
 				});
@@ -213,8 +213,8 @@ export class Game {
 	buildRoom(room: RoomConfig, position: Position) {
 		const config = this.config();
 		if (
-			typeof this.resources.wood !== "undefined" &&
-			config.rooms[room.type].costs.wood >= this.resources.wood
+			typeof this._resources.wood !== "undefined" &&
+			config.rooms[room.type].costs.wood >= this._resources.wood
 		) {
 			console.log(
 				`Not enough wood for ${room.type} at position X:${position.x} Y:${position.y}`,
@@ -222,8 +222,8 @@ export class Game {
 			return false;
 		}
 		if (
-			typeof this.resources.stone !== "undefined" &&
-			config.rooms[room.type].costs.stone >= this.resources.stone
+			typeof this._resources.stone !== "undefined" &&
+			config.rooms[room.type].costs.stone >= this._resources.stone
 		) {
 			console.log(
 				`Not enough stone for ${room.type} at position X:${position.x} Y:${position.y}`,
@@ -252,11 +252,11 @@ export class Game {
 		if(canbuild)
 		{
 			if (
-				typeof this.resources.wood !== "undefined" &&
-				typeof this.resources.stone !== "undefined"
+				typeof this._resources.wood !== "undefined" &&
+				typeof this._resources.stone !== "undefined"
 			) {
-				this.resources.wood -= config.rooms[room.type].costs.wood;
-				this.resources.stone -= config.rooms[room.type].costs.stone;
+				this._resources.wood -= config.rooms[room.type].costs.wood;
+				this._resources.stone -= config.rooms[room.type].costs.stone;
 			}
 			this.map.rooms.push({
 				workers: [],
@@ -270,31 +270,31 @@ export class Game {
 		return false;
 	}
 	mushroom_nursery(room: MapRoom) {
-		if (typeof this.resources.mushroom === "undefined") {
-			this.resources.mushroom = 1 * room.level;
+		if (typeof this._resources.mushroom === "undefined") {
+			this._resources.mushroom = 1 * room.level;
 		}
-		this.resources.mushroom += 1 * room.level;
-		if (typeof this.resources.wood === "undefined") {
-			this.resources.wood = 1 * room.level;
+		this._resources.mushroom += 1 * room.level;
+		if (typeof this._resources.wood === "undefined") {
+			this._resources.wood = 1 * room.level;
 		}
-		this.resources.wood += 1 * room.level;
+		this._resources.wood += 1 * room.level;
 	}
 	kitchen(room: MapRoom) {
-		if (typeof this.resources.cookedMushroom === "undefined" && typeof this.resources.mushroom !== "undefined" && this.resources.mushroom > 0) {
-			this.resources.cookedMushroom = 1 * room.level;
-			this.resources.mushroom -= 1 * room.level;
+		if (typeof this._resources.cookedMushroom === "undefined" && typeof this._resources.mushroom !== "undefined" && this._resources.mushroom > 0) {
+			this._resources.cookedMushroom = 1 * room.level;
+			this._resources.mushroom -= 1 * room.level;
 		}
-		else if (typeof this.resources.cookedMushroom !== "undefined" && typeof this.resources.mushroom !== "undefined" && this.resources.mushroom > 0) {
-			this.resources.cookedMushroom += 1 * room.level;
-			this.resources.mushroom -= 1 * room.level;
+		else if (typeof this._resources.cookedMushroom !== "undefined" && typeof this._resources.mushroom !== "undefined" && this._resources.mushroom > 0) {
+			this._resources.cookedMushroom += 1 * room.level;
+			this._resources.mushroom -= 1 * room.level;
 		}
 		// Nope
 	}
 	quarry(room: MapRoom) {
-		if (typeof this.resources.stone === "undefined") {
-			this.resources.stone = 1 * room.level;
+		if (typeof this._resources.stone === "undefined") {
+			this._resources.stone = 1 * room.level;
 		}
-		this.resources.stone += 1 * room.level;
+		this._resources.stone += 1 * room.level;
 	}
 	config(): Config {
 		return this._config;
@@ -302,5 +302,9 @@ export class Game {
 
 	rooms(): MapRoom[] {
 		return this.map.rooms;
+	}
+
+	resources(): Resources {
+		return this._resources;
 	}
 }
