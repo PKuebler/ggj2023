@@ -78,4 +78,7 @@ function startApp(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) 
 	})
 
 	app.startLoop(0);
+	setInterval(() => {
+		game.gameLoop();
+	}, 1000);
 }

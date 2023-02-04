@@ -66,7 +66,9 @@ export class Game {
 		cookedMushroom: 10,
 		waterBucket: 10,
 	};
-	_workers: WorkerT[] = [{ name: "Dieter", hunger: 0, thirst: 0, position: { x: 2, y: 2 }}];
+	_workers: WorkerT[] = [
+		{ name: "Dieter", hunger: 0, thirst: 0, position: { x: 2, y: 2 } },
+	];
 	map: MapT = {
 		rooms: [
 			{
@@ -180,6 +182,18 @@ export class Game {
 				time: 10,
 				type: "staircase",
 			},
+			spring: {
+				sprites: [{ x: 1, y: 0 }],
+				uiButton: { x: 6, y: 0 },
+				uiDisabledButton: { x: 10, y: 0 },
+				width: 1,
+				costs: {
+					wood: 2,
+					stone: 3,
+				},
+				time: 10,
+				type: "spring",
+			},
 		},
 	};
 	gameLoop() {
@@ -189,6 +203,7 @@ export class Game {
 					room.type === "mushroom_nursery" && this.mushroom_nursery(room);
 					room.type === "kitchen" && this.kitchen(room);
 					room.type === "quarry" && this.quarry(room);
+					room.type === "spring" && this.spring(room);
 					if (
 						room.type === "mushroom_nursery" ||
 						room.type === "kitchen" ||
@@ -321,6 +336,9 @@ export class Game {
 	quarry(room: MapRoom) {
 		this._resources.stone += 1 * room.level;
 	}
+	spring(room: MapRoom) {
+		this._resources.waterBucket += 1 * room.level;
+	}
 	config(): Config {
 		return this._config;
 	}
@@ -334,6 +352,6 @@ export class Game {
 	}
 
 	workers(): WorkerT[] {
-		return this._workers
+		return this._workers;
 	}
 }
