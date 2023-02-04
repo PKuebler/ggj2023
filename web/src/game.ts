@@ -291,8 +291,10 @@ export class Game {
 		});
 	}
 	moveWorker(worker: WorkerT, targetRoom: MapRoom) {
-		if (targetRoom.workers.length >= this._config.rooms[targetRoom.type].width) {
-			return
+		if (
+			targetRoom.workers.length >= this._config.rooms[targetRoom.type].width
+		) {
+			return;
 		}
 
 		let currentRoom: MapRoom | undefined = undefined;
@@ -313,10 +315,11 @@ export class Game {
 
 		worker.target = {x: targetRoom.position.x+targetRoom.workers.length, y: targetRoom.position.y}
 
-		worker.position.x = targetRoom.position.x+targetRoom.workers.length;
+		worker.position.x = targetRoom.position.x + targetRoom.workers.length;
 		worker.position.y = targetRoom.position.y;
 
-		if (!targetRoom.workers.includes(worker.name)) targetRoom.workers.push(worker.name);
+		if (!targetRoom.workers.includes(worker.name))
+			targetRoom.workers.push(worker.name);
 	}
 	findWay(startRoom: MapRoom, targetRoom: MapRoom): Position[] | undefined {
 		let pathFinder = aStar(this._graph, {
@@ -369,19 +372,35 @@ export class Game {
 			let roomWidth = this._config.rooms[roomOnMap.type].width;
 			if (!isRoomNearBy) {
 				if (roomOnMap.type === "staircase") {
-					if (position.y === roomOnMap.position.y && (position.x === roomOnMap.position.x-1 || position.x === roomOnMap.position.x+roomWidth)) {
+					if (
+						position.y === roomOnMap.position.y &&
+						(position.x === roomOnMap.position.x - 1 ||
+							position.x === roomOnMap.position.x + roomWidth)
+					) {
 						isRoomNearBy = true;
-					} else if ((position.y === roomOnMap.position.y-1 || position.y === roomOnMap.position.y+1) && position.x === roomOnMap.position.x) {
+					} else if (
+						(position.y === roomOnMap.position.y - 1 ||
+							position.y === roomOnMap.position.y + 1) &&
+						position.x === roomOnMap.position.x
+					) {
 						isRoomNearBy = true;
 					}
 				} else {
-					if (position.y === roomOnMap.position.y && (position.x === roomOnMap.position.x-1 || position.x === roomOnMap.position.x+roomWidth)) {
+					if (
+						position.y === roomOnMap.position.y &&
+						(position.x === roomOnMap.position.x - 1 ||
+							position.x === roomOnMap.position.x + roomWidth)
+					) {
 						isRoomNearBy = true;
 					}
 				}
 			}
 
-			if (position.y === roomOnMap.position.y && position.x >= roomOnMap.position.x && position.x < roomOnMap.position.x+roomWidth) {
+			if (
+				position.y === roomOnMap.position.y &&
+				position.x >= roomOnMap.position.x &&
+				position.x < roomOnMap.position.x + roomWidth
+			) {
 				canbuild = false;
 				return;
 			}
@@ -417,29 +436,41 @@ export class Game {
 
 		this.map.rooms.forEach((a) => {
 			this.map.rooms.forEach((b) => {
-				if (a == b) {
-					return
+				if (a === b) {
+					return;
 				}
 
-				if (a.type == "staircase") {
-					if (b.position.y-1 == a.position.y || b.position.y+1 == a.position.y) {
-					} else if (b.position.y == a.position.y) {
-						if (b.position.x == a.position.x-1 || b.position.x+this._config.rooms[b.type].width-1 == a.position.x) {
+				if (a.type === "staircase") {
+					if (
+						b.position.y - 1 === a.position.y ||
+						b.position.y + 1 === a.position.y
+					) {
+					} else if (b.position.y === a.position.y) {
+						if (
+							b.position.x === a.position.x - 1 ||
+							b.position.x + this._config.rooms[b.type].width - 1 ===
+								a.position.x
+						) {
 							const left = positionID({x: a.position.x, y: a.position.y});
 							const right = positionID({x: b.position.x, y: b.position.y});
 							this._graph.addLink(left, right);
 						}
 					}
-					return
+					return;
 				}
 
-				if (b.position.y == a.position.y && (b.position.x == a.position.x-1 || b.position.x+this._config.rooms[b.type].width-1 == a.position.x)) {
+				if (
+					b.position.y === a.position.y &&
+					(b.position.x === a.position.x - 1 ||
+						b.position.x + this._config.rooms[b.type].width - 1 ===
+							a.position.x)
+				) {
 					const left = positionID({x: a.position.x, y: a.position.y});
 					const right = positionID({x: b.position.x, y: b.position.y});
 					this._graph.addLink(left, right);
 				}
-			})
-		})
+			});
+		});
 	}
 	mushroom_nursery(room: MapRoom) {
 		this._resources.mushroom += 1 * room.level;
@@ -452,13 +483,25 @@ export class Game {
 		}
 	}
 	bedroom(room: MapRoom) {
-		if(room.workers.length === 2) {
+		if (room.workers.length === 2) {
 			this._child += 0.05;
 		}
-		if(this._child > 0.99)
-		{
+		if (this._child > 0.99) {
 			// new worker
-			this._workers.push({ name: `Worker${this.workers.length+1}`, hunger: 0, thirst: 0, position: { x: room.position.x, y: room.position.y }, target: undefined, way: [] });
+			let workername = `Worker${this.workers.length + 1}`;
+			this._workers.push({
+				name: workername,
+				hunger: 0,
+				thirst: 0,
+				position: { x: room.position.x, y: room.position.y },
+				target: undefined,
+				way: []
+			});
+			this.map.rooms.forEach((roomT) => {
+				if (roomT === room) {
+					roomT.workers.push(workername);
+				}
+			});
 			this._child = 0;
 		}
 	}
@@ -482,6 +525,10 @@ export class Game {
 
 	workers(): WorkerT[] {
 		return this._workers;
+	}
+
+	child(): number {
+		return this._child;
 	}
 }
 

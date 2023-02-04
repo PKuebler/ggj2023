@@ -146,7 +146,7 @@ export class Renderer {
 		this._ctx.fillStyle = "white";
 		const resources = this._game.resources()
 
-		this._ctx.fillText(`Wood: ${resources.wood} Stone: ${resources.stone} Mushroom: ${resources.mushroom} CookedMushroom: ${resources.cookedMushroom} WaterBucket: ${resources.waterBucket}`, 20, 20);
+		this._ctx.fillText(`Wood: ${resources.wood} Stone: ${resources.stone} Mushroom: ${resources.mushroom} CookedMushroom: ${resources.cookedMushroom} WaterBucket: ${resources.waterBucket} ChildStatus: ${Math.round(this._game.child() * 10) / 10}`, 20, 20);
 	}
 
 	setMode(mode: string) {
