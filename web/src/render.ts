@@ -88,7 +88,7 @@ export class Renderer {
 		}
 
 		// ui
-		const roomNames = Object.keys(config.rooms)
+		const roomNames = Object.keys(config.rooms)32
 		for (let i = 0; i < roomNames.length; i++) {
 			const room = config.rooms[roomNames[i]];
 			this._ctx.drawImage(ui, room.uiButton.x*this._tileWidth, room.uiButton.y*this._tileHeight, this._tileWidth, this._tileHeight, this._uiX+i*this._tileWidth, this._uiY, this._tileWidth, this._tileHeight);
