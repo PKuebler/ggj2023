@@ -454,6 +454,16 @@ export class Game {
 		})
 
 		this.map.rooms.forEach((a) => {
+			const aRoomConfig = this._config.rooms[a.type];
+			if (aRoomConfig.width > 1) {
+				for(let i = 0; i < aRoomConfig.width-1; i++) {
+					const left = positionID({x: a.position.x+i, y: a.position.y});
+					const right = positionID({x: a.position.x+i+1, y: a.position.y});
+					this._graph.addLink(left, right);
+					this._graph.addLink(right, left);
+				}
+			}
+
 			this.map.rooms.forEach((b) => {
 				if (a === b) {
 					return;
@@ -467,7 +477,6 @@ export class Game {
 						if (a.position.x == b.position.x) {
 							const left = positionID({x: a.position.x, y: a.position.y});
 							const right = positionID({x: b.position.x, y: b.position.y});
-							console.log(left, right)
 							this._graph.addLink(left, right);
 						}
 					} else if (b.position.y === a.position.y) {
@@ -481,7 +490,6 @@ export class Game {
 							this._graph.addLink(left, right);
 						}
 					}
-					return;
 				}
 
 				if (
