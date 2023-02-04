@@ -301,6 +301,30 @@ export class Game {
 			return;
 		}
 		let canbuild = true;
+		let isRoomNearBy = false;
+		this.map.rooms.forEach((roomOnMap) => {
+			let roomWidth = this._config.rooms[roomOnMap.type].width;
+
+			if (!isRoomNearBy) {
+				if (roomOnMap.type == "staircase") {
+					if (position.y == roomOnMap.position.y && (position.x == roomOnMap.position.x-1 || position.x == roomOnMap.position.x+roomWidth)) {
+						isRoomNearBy = true;
+					} else if ((position.y == roomOnMap.position.y-1 || position.y == roomOnMap.position.y+1) && position.x == roomOnMap.position.x) {
+						isRoomNearBy = true;
+					}
+				} else {
+					if (position.y == roomOnMap.position.y && (position.x == roomOnMap.position.x-1 || position.x == roomOnMap.position.x+roomWidth)) {
+						isRoomNearBy = true;
+					}
+				}
+			}
+
+			if (position.y == roomOnMap.position.y && position.x >= roomOnMap.position.x && position.x < roomOnMap.position.x+roomWidth) {
+				canbuild = false;
+				return;
+			}
+		});
+/*
 		this.map.rooms.forEach((roomT) => {
 			if (roomT.position.y !== position.y) {
 				return;
@@ -323,7 +347,8 @@ export class Game {
 				}
 			}
 		});
-		if (canbuild) {
+		*/
+		if (canbuild && isRoomNearBy) {
 			this._resources.wood -= config.rooms[room.type].costs.wood;
 			this._resources.stone -= config.rooms[room.type].costs.stone;
 			this.map.rooms.push({
