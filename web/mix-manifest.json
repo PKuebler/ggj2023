@@ -2,6 +2,7 @@
     "/dist/app.js": "/dist/app.js",
     "/dist/css/main.css": "/dist/css/main.css",
     "/dist/index.html": "/dist/index.html",
+    "/dist/assets/ground.aseprite": "/dist/assets/ground.aseprite",
     "/dist/assets/ground.png": "/dist/assets/ground.png",
     "/dist/assets/ui.aseprite": "/dist/assets/ui.aseprite",
     "/dist/assets/ui.png": "/dist/assets/ui.png"

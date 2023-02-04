@@ -9,8 +9,14 @@ interface Costs {
 	stone: number;
 }
 
-interface Room {
-	spriteName: string;
+type Sprite = {
+	x: number;
+	y: number;
+}
+
+export type Room = {
+	sprites: Sprite[];
+	uiButton: Sprite;
 	width: number;
 	costs: Costs;
 	time: number;
@@ -193,7 +199,11 @@ let resources: Resources = {
 let config: Config = {
 	rooms: {
 		kitchen: {
-			spriteName: "",
+			sprites: [
+				{ x: 2, y: 0 },
+				{ x: 3, y: 0 },
+			],
+			uiButton: { x: 4, y: 0 },
 			width: 3,
 			costs: {
 				wood: 2,
