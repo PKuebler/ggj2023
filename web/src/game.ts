@@ -86,6 +86,54 @@ export class Game {
 	map: MapT = {
 		rooms: [
 			{
+				workers: [],
+				resources: {
+					wood: 0,
+					stone: 0,
+					mushroom: 0,
+					cookedMushroom: 0,
+					waterBucket: 0,
+				},
+				type: "staircase",
+				level: 1.0,
+				position: {
+					x: 1,
+					y: 2,
+				},
+			},
+			{
+				workers: [],
+				resources: {
+					wood: 0,
+					stone: 0,
+					mushroom: 0,
+					cookedMushroom: 0,
+					waterBucket: 0,
+				},
+				type: "staircase",
+				level: 1.0,
+				position: {
+					x: 1,
+					y: 3,
+				},
+			},
+			{
+				workers: [],
+				resources: {
+					wood: 0,
+					stone: 0,
+					mushroom: 0,
+					cookedMushroom: 0,
+					waterBucket: 0,
+				},
+				type: "staircase",
+				level: 1.0,
+				position: {
+					x: 1,
+					y: 4,
+				},
+			},
+			{
 				workers: ['Worker1', 'Worker2'],
 				resources: {
 					wood: 10,
@@ -113,7 +161,7 @@ export class Game {
 				type: "kitchen",
 				level: 1.0,
 				position: {
-					x: 3,
+					x: 2,
 					y: 3,
 				},
 			},
@@ -121,15 +169,15 @@ export class Game {
 				workers: [],
 				resources: {
 					stone: 10,
-					wood: 10,
-					mushroom: 10,
+					wood: 0,
+					mushroom: 0,
 					cookedMushroom: 0,
 					waterBucket: 0,
 				},
 				type: "quarry",
 				level: 1.0,
 				position: {
-					x: 4,
+					x: 2,
 					y: 4,
 				},
 			},
@@ -305,8 +353,8 @@ export class Game {
 						room.type === "kitchen" ||
 						room.type === "quarry"
 					) {
-						useWorker.hunger += 0.1;
-						useWorker.thirst += 0.1;
+						useWorker.hunger += 0.02;
+						useWorker.thirst += 0.05;
 						if (useWorker.hunger > 1 || useWorker.thirst > 1) {
 							console.log("Worker is dead");
 							this.removeWorker(useWorker);
@@ -348,7 +396,7 @@ export class Game {
 		worker.target = {x: targetRoom.position.x+targetRoom.workers.length, y: targetRoom.position.y}
 		console.log(worker.position);
 		worker.way = this.findWay({x: worker.position.x, y: worker.position.y}, {x: worker.target.x, y: worker.target.y});
-		if (worker.way.length == 0) {
+		if (worker.way.length === 0) {
 			console.log("Oh no, no way!")
 			return
 		}
@@ -384,7 +432,7 @@ export class Game {
 		const right = positionID({x: targetRoom.x, y: targetRoom.y});
 		let way = pathFinder.find(left, right);
 
-		if (way.length == 0) {
+		if (way.length === 0) {
 			return [];
 		}
 
@@ -501,7 +549,7 @@ export class Game {
 						b.position.y - 1 === a.position.y ||
 						b.position.y + 1 === a.position.y
 					) {
-						if (a.position.x == b.position.x) {
+						if (a.position.x === b.position.x) {
 							const left = positionID({x: a.position.x, y: a.position.y});
 							const right = positionID({x: b.position.x, y: b.position.y});
 							this._graph.addLink(left, right);
