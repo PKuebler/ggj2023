@@ -75,6 +75,7 @@ export class Renderer {
 		this._loader = new Loader({
 			tile_ground: 'assets/ground.png',
 			ui: 'assets/ui.png',
+			logo: 'assets/logo.png'
 		});
 		this._loader.load();
 	}
@@ -92,6 +93,8 @@ export class Renderer {
 			this._ctx.fillText(`Load Assets: ${this._loader.process}`, 20, 20);
 			return
 		}
+
+		this._ctx.drawImage(this._loader.getImage('logo'), 0, 0, 1582, 890, this._canvas.width-316, this._canvas.height-178, 316, 178);
 
 		const ground = this._loader.getImage('tile_ground')
 		const ui = this._loader.getImage('ui')
