@@ -621,11 +621,14 @@ export class Game {
 				const workerT = this._workers.find((w) => w.name === worker);
 				if (workerT) {
 					if (
-						(workerT.renderPosition.x === room.position.x + 1 ||
-							workerT.renderPosition.x === room.position.x) &&
-						workerT.renderPosition.y === room.position.y
+						(workerT.position.x === room.position.x + 1 ||
+							workerT.position.x === room.position.x) &&
+						workerT.position.y === room.position.y
 					) {
 						this._child += 0.05;
+					}
+					else{
+						console.log(workerT.renderPosition.x, workerT.renderPosition.y);
 					}
 				}
 			});
