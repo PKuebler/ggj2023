@@ -476,6 +476,7 @@ export class Game {
 		});
 	}
 	enoughResourcesToBuildAvailable(room: RoomConfig) {
+		return true
 		const config = this.config();
 		if (config.rooms[room.type].costs.wood >= this._resources.wood) {
 			return false;
