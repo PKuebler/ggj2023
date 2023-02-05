@@ -43,7 +43,8 @@ export class Renderer {
 		this._hoverUi = undefined;
 
 		this._uiX = 10;
-		this._uiY = this._canvas.height-70;
+		this._uiY = 0;
+		this.resize();
 		this._uiSpace = 10;
 
 		this._mode = "inspect";
@@ -248,5 +249,9 @@ export class Renderer {
 			x: mapX*this._tileWidth,
 			y: mapY*this._tileHeight
 		}
+	}
+
+	resize() {
+		this._uiY = this._canvas.height-110;
 	}
 }

@@ -26,6 +26,9 @@ class App {
 		this._context = context;
 		this._game = game;
 		this._renderer = new Renderer(this._game, this._canvas, this._context);
+		this.resizeCanvas();
+
+		window.addEventListener('resize', () => {this.resizeCanvas();}, false);
 	}
 
 	startLoop(now: number) {
@@ -69,6 +72,13 @@ class App {
 
 	hover(x: number, y: number) {
 		this._renderer.hoverScreen(x, y)
+	}
+
+	resizeCanvas() {
+		this._canvas.width = window.innerWidth;
+		this._canvas.height = window.innerHeight;
+
+		this._renderer.resize();
 	}
 }
 
