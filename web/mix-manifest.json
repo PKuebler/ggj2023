@@ -4,7 +4,7 @@
     "/dist/index.html": "/dist/index.html",
     "/dist/assets/ground.aseprite": "/dist/assets/ground.aseprite",
     "/dist/assets/ground.png": "/dist/assets/ground.png",
+    "/dist/assets/logo.png": "/dist/assets/logo.png",
     "/dist/assets/ui.aseprite": "/dist/assets/ui.aseprite",
-    "/dist/assets/ui.png": "/dist/assets/ui.png",
-    "/dist/assets/logo.png": "/dist/assets/logo.png"
+    "/dist/assets/ui.png": "/dist/assets/ui.png"
 }
