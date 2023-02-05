@@ -1,4 +1,4 @@
-# Access Root(s)
+# Root(s) Access
 
 *GlobalGameJam 2023*
 
