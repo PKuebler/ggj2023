@@ -1,4 +1,4 @@
-let createGraph = require("ngraph.graph")
+let createGraph = require("ngraph.graph");
 import { Graph } from "ngraph.graph";
 import { aStar } from "ngraph.path";
 import { getTextOfJSDocComment } from "typescript";
@@ -80,8 +80,24 @@ export class Game {
 	};
 	_child = 0;
 	_workers: WorkerT[] = [
-		{ name: "Worker1", hunger: 0, thirst: 0, position: { x: 2, y: 2 }, renderPosition: { x: 2, y: 2}, target: undefined, way: [] },
-		{ name: "Worker2", hunger: 0, thirst: 0, position: { x: 3, y: 2 }, renderPosition: { x: 3, y: 2}, target: undefined, way: [] },
+		{
+			name: "Worker1",
+			hunger: 0,
+			thirst: 0,
+			position: { x: 2, y: 2 },
+			renderPosition: { x: 2, y: 2 },
+			target: undefined,
+			way: [],
+		},
+		{
+			name: "Worker2",
+			hunger: 0,
+			thirst: 0,
+			position: { x: 3, y: 2 },
+			renderPosition: { x: 3, y: 2 },
+			target: undefined,
+			way: [],
+		},
 	];
 	map: MapT = {
 		rooms: [
@@ -134,7 +150,7 @@ export class Game {
 				},
 			},
 			{
-				workers: ['Worker1', 'Worker2'],
+				workers: ["Worker1", "Worker2"],
 				resources: {
 					wood: 10,
 					stone: 0,
@@ -314,13 +330,25 @@ export class Game {
 			if (worker.way.length === 0) {
 				return;
 			}
-			const element = worker.way[worker.way.length-1];
-			worker.renderPosition.x = mapRange(this._tick, 0, 1000, worker.position.x, element.x)
-			worker.renderPosition.y = mapRange(this._tick, 0, 1000, worker.position.y, element.y)
-		})
+			const element = worker.way[worker.way.length - 1];
+			worker.renderPosition.x = mapRange(
+				this._tick,
+				0,
+				1000,
+				worker.position.x,
+				element.x,
+			);
+			worker.renderPosition.y = mapRange(
+				this._tick,
+				0,
+				1000,
+				worker.position.y,
+				element.y,
+			);
+		});
 
 		if (this._tick < 1000) {
-			return
+			return;
 		}
 		this._tick = 0;
 
@@ -335,7 +363,7 @@ export class Game {
 				worker.position.x = element.x;
 				worker.position.y = element.y;
 			}
-		})
+		});
 
 		this.map.rooms.forEach((room) => {
 			if (room.workers.length > 0) {
@@ -393,12 +421,18 @@ export class Game {
 			return;
 		}
 
-		worker.target = {x: targetRoom.position.x+targetRoom.workers.length, y: targetRoom.position.y}
+		worker.target = {
+			x: targetRoom.position.x + targetRoom.workers.length,
+			y: targetRoom.position.y,
+		};
 		console.log(worker.position);
-		worker.way = this.findWay({x: worker.position.x, y: worker.position.y}, {x: worker.target.x, y: worker.target.y});
+		worker.way = this.findWay(
+			{ x: worker.position.x, y: worker.position.y },
+			{ x: worker.target.x, y: worker.target.y },
+		);
 		if (worker.way.length === 0) {
-			console.log("Oh no, no way!")
-			return
+			console.log("Oh no, no way!");
+			return;
 		}
 		console.log(worker.way);
 
@@ -426,10 +460,10 @@ export class Game {
 
 				return Math.sqrt(dx * dx + dy * dy);
 			},
-			oriented: true
+			oriented: true,
 		});
-		const left = positionID({x: startRoom.x, y: startRoom.y});
-		const right = positionID({x: targetRoom.x, y: targetRoom.y});
+		const left = positionID({ x: startRoom.x, y: startRoom.y });
+		const right = positionID({ x: targetRoom.x, y: targetRoom.y });
 		let way = pathFinder.find(left, right);
 
 		if (way.length === 0) {
@@ -438,8 +472,8 @@ export class Game {
 
 		return way.map((item) => {
 			console.log(item.data);
-			return {x: item.data.x, y: item.data.y}
-		})
+			return { x: item.data.x, y: item.data.y };
+		});
 	}
 	enoughResourcesToBuildAvailable(room: RoomConfig) {
 		const config = this.config();
@@ -491,11 +525,14 @@ export class Game {
 
 			if (
 				position.y === roomOnMap.position.y &&
-				position.x >= roomOnMap.position.x &&
+				position.x >= roomOnMap.position.x -1 &&
 				position.x < roomOnMap.position.x + roomWidth
 			) {
 				canbuild = false;
 				return;
+			}
+			else{
+				console.log(position.x, roomOnMap.position.x, roomWidth);
 			}
 		});
 
@@ -523,17 +560,23 @@ export class Game {
 	updateNavMesh() {
 		this._graph = createGraph();
 		this.map.rooms.forEach((a) => {
-			for(let i = 0; i < this._config.rooms[a.type].width; i++) {
-				this._graph.addNode(positionID({x: a.position.x+i, y: a.position.y}), {x: a.position.x+i, y: a.position.y});
+			for (let i = 0; i < this._config.rooms[a.type].width; i++) {
+				this._graph.addNode(
+					positionID({ x: a.position.x + i, y: a.position.y }),
+					{ x: a.position.x + i, y: a.position.y },
+				);
 			}
-		})
+		});
 
 		this.map.rooms.forEach((a) => {
 			const aRoomConfig = this._config.rooms[a.type];
 			if (aRoomConfig.width > 1) {
-				for(let i = 0; i < aRoomConfig.width-1; i++) {
-					const left = positionID({x: a.position.x+i, y: a.position.y});
-					const right = positionID({x: a.position.x+i+1, y: a.position.y});
+				for (let i = 0; i < aRoomConfig.width - 1; i++) {
+					const left = positionID({ x: a.position.x + i, y: a.position.y });
+					const right = positionID({
+						x: a.position.x + i + 1,
+						y: a.position.y,
+					});
 					this._graph.addLink(left, right);
 					this._graph.addLink(right, left);
 				}
@@ -550,8 +593,8 @@ export class Game {
 						b.position.y + 1 === a.position.y
 					) {
 						if (a.position.x === b.position.x) {
-							const left = positionID({x: a.position.x, y: a.position.y});
-							const right = positionID({x: b.position.x, y: b.position.y});
+							const left = positionID({ x: a.position.x, y: a.position.y });
+							const right = positionID({ x: b.position.x, y: b.position.y });
 							this._graph.addLink(left, right);
 						}
 					} else if (b.position.y === a.position.y) {
@@ -560,8 +603,8 @@ export class Game {
 							b.position.x + this._config.rooms[b.type].width - 1 ===
 								a.position.x
 						) {
-							const left = positionID({x: a.position.x, y: a.position.y});
-							const right = positionID({x: b.position.x, y: b.position.y});
+							const left = positionID({ x: a.position.x, y: a.position.y });
+							const right = positionID({ x: b.position.x, y: b.position.y });
 							this._graph.addLink(left, right);
 						}
 					}
@@ -573,15 +616,21 @@ export class Game {
 
 				// left
 				if (b.position.x + this._config.rooms[b.type].width === a.position.x) {
-					const left = positionID({x: b.position.x + this._config.rooms[b.type].width - 1, y: b.position.y});
-					const right = positionID({x: a.position.x, y: a.position.y});
+					const left = positionID({
+						x: b.position.x + this._config.rooms[b.type].width - 1,
+						y: b.position.y,
+					});
+					const right = positionID({ x: a.position.x, y: a.position.y });
 					this._graph.addLink(right, left);
 				}
 
 				// right
 				if (a.position.x + this._config.rooms[a.type].width === b.position.x) {
-					const left = positionID({x: a.position.x + this._config.rooms[a.type].width - 1, y: a.position.y});
-					const right = positionID({x: b.position.x, y: b.position.y});
+					const left = positionID({
+						x: a.position.x + this._config.rooms[a.type].width - 1,
+						y: a.position.y,
+					});
+					const right = positionID({ x: b.position.x, y: b.position.y });
 					this._graph.addLink(left, right);
 				}
 			});
@@ -599,7 +648,19 @@ export class Game {
 	}
 	bedroom(room: MapRoom) {
 		if (room.workers.length === 2) {
-			this._child += 0.05;
+			// prüfen ob die beiden worker auf der richtige position sind
+			room.workers.forEach((worker) => {
+				const workerT = this._workers.find((w) => w.name === worker);
+				if (workerT) {
+					if (
+						(workerT.renderPosition.x === room.position.x + 1 ||
+							workerT.renderPosition.x === room.position.x) &&
+						workerT.renderPosition.y === room.position.y
+					) {
+						this._child += 0.05;
+					}
+				}
+			});
 		}
 		if (this._child > 0.99) {
 			// new worker
@@ -611,7 +672,7 @@ export class Game {
 				position: { x: room.position.x, y: room.position.y },
 				renderPosition: { x: room.position.x, y: room.position.y },
 				target: undefined,
-				way: []
+				way: [],
 			});
 			this.map.rooms.forEach((roomT) => {
 				if (roomT === room) {
@@ -649,10 +710,16 @@ export class Game {
 }
 
 function positionID(pos: Position): string {
-	return `${pos.x}:${pos.y}`
+	return `${pos.x}:${pos.y}`;
 }
 
-function mapRange(value: number, a: number, b: number, c: number, d: number): number {
+function mapRange(
+	value: number,
+	a: number,
+	b: number,
+	c: number,
+	d: number,
+): number {
 	// first map value from (a..b) to (0..1)
 	value = (value - a) / (b - a);
 	// then map it from (0..1) to (c..d) and return it
