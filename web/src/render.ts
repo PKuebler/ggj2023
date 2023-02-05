@@ -82,7 +82,7 @@ export class Renderer {
 
 	draw(delta: number) {
 		// draw background
-		this._ctx.fillStyle = "rgb(16, 17, 18)";
+		this._ctx.fillStyle = "rgb(34, 32, 52)";
 		this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
 
 		// set text
@@ -98,6 +98,14 @@ export class Renderer {
 
 		const ground = this._loader.getImage('tile_ground')
 		const ui = this._loader.getImage('ui')
+
+		for (let x = 0; x < this._canvas.width; x += this._tileWidth) {
+			let sprite = 17;
+			if (x % 3 < 1) {
+				sprite = 19;
+			}
+			this._ctx.drawImage(ground, sprite*this._tileWidth, 0, this._tileWidth, this._tileHeight, x, 0, this._tileWidth, this._tileHeight);
+		}
 
 		// rooms
 		const config = this._game.config()
