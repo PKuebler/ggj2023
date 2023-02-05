@@ -22,6 +22,8 @@ export type RoomConfig = {
 	sprites: Sprite[];
 	uiButton: Sprite;
 	uiDisabledButton: Sprite;
+	uiHoverButton: Sprite;
+	label: string;
 	width: number;
 	costs: Costs;
 	time: number;
@@ -140,8 +142,10 @@ export class Game {
 					{ x: 2, y: 0 },
 					{ x: 3, y: 0 },
 				],
-				uiButton: { x: 4, y: 0 },
+				uiButton: { x: 7, y: 0 },
 				uiDisabledButton: { x: 8, y: 0 },
+				uiHoverButton: { x: 21, y: 0 },
+				label: "kitchen",
 				width: 2,
 				costs: {
 					wood: 2,
@@ -156,8 +160,10 @@ export class Game {
 					{ x: 9, y: 0 },
 					{ x: 7, y: 0 },
 				],
-				uiButton: { x: 7, y: 0 },
-				uiDisabledButton: { x: 9, y: 0 },
+				uiButton: { x: 10, y: 0 },
+				uiDisabledButton: { x: 11, y: 0 },
+				uiHoverButton: { x: 23, y: 0 },
+				label: "mushrooms",
 				width: 3,
 				costs: {
 					wood: 2,
@@ -172,8 +178,10 @@ export class Game {
 					{ x: 6, y: 0 },
 					{ x: 4, y: 0 },
 				],
-				uiButton: { x: 5, y: 0 },
-				uiDisabledButton: { x: 10, y: 0 },
+				uiButton: { x: 12, y: 0 },
+				uiDisabledButton: { x: 13, y: 0 },
+				uiHoverButton: { x: 24, y: 0 },
+				label: "quarry",
 				width: 3,
 				costs: {
 					wood: 2,
@@ -184,8 +192,10 @@ export class Game {
 			},
 			staircase: {
 				sprites: [{ x: 1, y: 0 }],
-				uiButton: { x: 6, y: 0 },
-				uiDisabledButton: { x: 11, y: 0 },
+				uiButton: { x: 9, y: 0 },
+				uiDisabledButton: { x: 4, y: 0 },
+				uiHoverButton: { x: 22, y: 0 },
+				label: "stairs",
 				width: 1,
 				costs: {
 					wood: 2,
@@ -196,8 +206,10 @@ export class Game {
 			},
 			spring: {
 				sprites: [{ x: 15, y: 0 }],
-				uiButton: { x: 15, y: 0 },
-				uiDisabledButton: { x: 14, y: 0 },
+				uiButton: { x: 16, y: 0 },
+				uiDisabledButton: { x: 17, y: 0 },
+				uiHoverButton: { x: 26, y: 0 },
+				label: "spring",
 				width: 1,
 				costs: {
 					wood: 2,
@@ -211,8 +223,10 @@ export class Game {
 					{ x: 13, y: 0 },
 					{ x: 14, y: 0 },
 				],
-				uiButton: { x: 12, y: 0 },
-				uiDisabledButton: { x: 13, y: 0 },
+				uiButton: { x: 14, y: 0 },
+				uiDisabledButton: { x: 15, y: 0 },
+				uiHoverButton: { x: 25, y: 0 },
+				label: "lunchroom",
 				width: 2,
 				costs: {
 					wood: 2,
@@ -226,8 +240,10 @@ export class Game {
 					{ x: 16, y: 0 },
 					{ x: 18, y: 0 },
 				],
-				uiButton: { x: 16, y: 0 },
-				uiDisabledButton: { x: 17, y: 0 },
+				uiButton: { x: 18, y: 0 },
+				uiDisabledButton: { x: 19, y: 0 },
+				uiHoverButton: { x: 27, y: 0 },
+				label: "bedroom",
 				width: 2,
 				costs: {
 					wood: 2,

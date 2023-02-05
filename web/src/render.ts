@@ -14,9 +14,11 @@ export class Renderer {
 	_hoverY: number;
 	_hoverRoom: MapRoom | undefined;
 	_hoverWorker: WorkerT | undefined;
+	_hoverUi: RoomConfig | undefined;
 
 	_uiX: number;
 	_uiY: number;
+	_uiSpace: number;
 
 	_mode: string;
 
@@ -38,9 +40,11 @@ export class Renderer {
 		this._hoverY = 0;
 		this._hoverRoom = undefined;
 		this._hoverWorker = undefined;
+		this._hoverUi = undefined;
 
-		this._uiX = 0;
-		this._uiY = this._canvas.height-62;
+		this._uiX = 10;
+		this._uiY = this._canvas.height-70;
+		this._uiSpace = 10;
 
 		this._mode = "inspect";
 
@@ -132,6 +136,8 @@ export class Renderer {
 			this._ctx.drawImage(ground, this._workerHoverSprite.x*this._tileWidth, this._workerHoverSprite.y*this._tileHeight, this._tileWidth, this._tileHeight, screenPos.x, screenPos.y, this._tileWidth, this._tileHeight);
 		}
 
+		this._ctx.fillStyle = "white";
+
 		// ui
 		const roomNames = Object.keys(config.rooms)
 		for (let i = 0; i < roomNames.length; i++) {
@@ -139,11 +145,15 @@ export class Renderer {
 			let sprite = room.uiButton;
 			if (!this._game.enoughResourcesToBuildAvailable(room)) {
 				sprite = room.uiDisabledButton;
+			} else if (this._hoverUi === room) {
+				sprite = room.uiHoverButton;
 			}
-			this._ctx.drawImage(ui, sprite.x*this._tileWidth, sprite.y*this._tileHeight, this._tileWidth, this._tileHeight, this._uiX+i*this._tileWidth, this._uiY, this._tileWidth, this._tileHeight);
+			const x = this._uiX+i*(this._tileWidth + this._uiSpace);
+			const y = this._uiY
+			this._ctx.drawImage(ui, sprite.x*this._tileWidth, sprite.y*this._tileHeight, this._tileWidth, this._tileHeight, x, y, this._tileWidth, this._tileHeight);
+			this._ctx.fillText(room.label, x, y-5);
 		}
 
-		this._ctx.fillStyle = "white";
 		const resources = this._game.resources()
 
 		this._ctx.fillText(`Wood: ${resources.wood} Stone: ${resources.stone} Mushroom: ${resources.mushroom} CookedMushroom: ${resources.cookedMushroom} WaterBucket: ${resources.waterBucket} ChildStatus: ${Math.round(this._game.child() * 10) / 10}`, 20, 20);
@@ -166,7 +176,7 @@ export class Renderer {
 
 		const roomNames = Object.keys(config.rooms)
 		for (let i = 0; i < roomNames.length; i++) {
-			if (screenX > this._uiX+i*this._tileWidth && screenX < this._uiX+(i+1)*this._tileWidth) {
+			if (screenX > this._uiX+i*(this._tileWidth + this._uiSpace) && screenX < this._uiX+(i+1)*(this._tileWidth + this._uiSpace)) {
 				return config.rooms[roomNames[i]];
 			}
 		}
@@ -223,6 +233,7 @@ export class Renderer {
 
 		this._hoverRoom = this.roomOnScreen(screenX, screenY)
 		this._hoverWorker = this.workerOnScreen(screenX, screenY)
+		this._hoverUi = this.uiOnScreen(screenX, screenY)
 	}
 
 	screenToMap(screenX: number, screenY: number) {
