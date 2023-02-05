@@ -84,8 +84,8 @@ export class Game {
 			name: "Worker1",
 			hunger: 0,
 			thirst: 0,
-			position: { x: 2, y: 2 },
-			renderPosition: { x: 2, y: 2 },
+			position: { x: 0, y: 1 },
+			renderPosition: { x: 0, y: 1 },
 			target: undefined,
 			way: [],
 		},
@@ -93,8 +93,8 @@ export class Game {
 			name: "Worker2",
 			hunger: 0,
 			thirst: 0,
-			position: { x: 3, y: 2 },
-			renderPosition: { x: 3, y: 2 },
+			position: { x: 0, y: 2 },
+			renderPosition: { x: 0, y: 2 },
 			target: undefined,
 			way: [],
 		},
@@ -102,7 +102,7 @@ export class Game {
 	map: MapT = {
 		rooms: [
 			{
-				workers: [],
+				workers: ["Worker1"],
 				resources: {
 					wood: 0,
 					stone: 0,
@@ -113,44 +113,28 @@ export class Game {
 				type: "staircase",
 				level: 1.0,
 				position: {
-					x: 1,
+					x: 0,
+					y: 1,
+				},
+			},
+			{
+				workers: ["Worker2"],
+				resources: {
+					wood: 0,
+					stone: 0,
+					mushroom: 0,
+					cookedMushroom: 0,
+					waterBucket: 0,
+				},
+				type: "staircase",
+				level: 1.0,
+				position: {
+					x: 0,
 					y: 2,
 				},
 			},
 			{
 				workers: [],
-				resources: {
-					wood: 0,
-					stone: 0,
-					mushroom: 0,
-					cookedMushroom: 0,
-					waterBucket: 0,
-				},
-				type: "staircase",
-				level: 1.0,
-				position: {
-					x: 1,
-					y: 3,
-				},
-			},
-			{
-				workers: [],
-				resources: {
-					wood: 0,
-					stone: 0,
-					mushroom: 0,
-					cookedMushroom: 0,
-					waterBucket: 0,
-				},
-				type: "staircase",
-				level: 1.0,
-				position: {
-					x: 1,
-					y: 4,
-				},
-			},
-			{
-				workers: ["Worker1", "Worker2"],
 				resources: {
 					wood: 10,
 					stone: 0,
@@ -161,24 +145,8 @@ export class Game {
 				type: "mushroom_nursery",
 				level: 1.0,
 				position: {
-					x: 2,
-					y: 2,
-				},
-			},
-			{
-				workers: [],
-				resources: {
-					stone: 0,
-					wood: 0,
-					mushroom: 0,
-					cookedMushroom: 10,
-					waterBucket: 0,
-				},
-				type: "kitchen",
-				level: 1.0,
-				position: {
-					x: 2,
-					y: 3,
+					x: 1,
+					y: 1,
 				},
 			},
 			{
@@ -193,8 +161,8 @@ export class Game {
 				type: "quarry",
 				level: 1.0,
 				position: {
-					x: 2,
-					y: 4,
+					x: 1,
+					y: 2,
 				},
 			},
 		],
